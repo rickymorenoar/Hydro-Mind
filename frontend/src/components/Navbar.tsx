@@ -12,6 +12,7 @@ export default function Navbar() {
   const [devices, setDevices] = useState<Device[]>([]);
   const [activeDeviceId, setActiveDeviceId] = useState<number | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [logoSrc, setLogoSrc] = useState<string>('/logo-smenda.webp');
 
   // Check if user is currently inside a device dashboard view
   const isInsideDevice = pathname.startsWith('/devices/');
@@ -68,17 +69,33 @@ export default function Navbar() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between gap-4">
           
-          {/* Brand Logo */}
+          {/* School / Institution Custom Logo & Brand */}
           <div className="flex items-center gap-3">
-            <Link href="/" className="flex items-center gap-2.5 group">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-600 text-white shadow-xs group-hover:bg-emerald-700 transition-colors">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" />
-                </svg>
+            <Link href="/" className="flex items-center gap-3 group">
+              {/* Photo / Image Logo Container */}
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white border border-slate-200 shadow-2xs group-hover:border-emerald-500 transition-colors">
+                <img
+                  src={logoSrc}
+                  alt="Logo SMKN 2 Buduran"
+                  className="h-full w-full object-contain p-0.5"
+                  onError={() => {
+                    if (logoSrc === '/logo-smenda.webp') {
+                      setLogoSrc('/logo.png');
+                    } else if (logoSrc === '/logo.png') {
+                      setLogoSrc('/logo.svg');
+                    }
+                  }}
+                />
               </div>
+
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="font-semibold text-slate-900 tracking-tight text-base">HydroMind</span>
+                  <span className="font-bold text-slate-900 tracking-tight text-base group-hover:text-emerald-700 transition-colors">
+                    HydroMind
+                  </span>
+                  <span className="rounded bg-emerald-50 px-1.5 py-0.5 text-[10px] font-mono font-semibold text-emerald-700 border border-emerald-200">
+                    RA-RISA CONNECT
+                  </span>
                 </div>
                 <p className="text-[11px] text-slate-500 leading-none">Smart Greenhouse Telemetry</p>
               </div>
@@ -128,7 +145,7 @@ export default function Navbar() {
           {isInsideDevice && (
             <>
               {/* Unit Dropdown Selector */}
-              {devices.length > 0 ? (
+              {devices.length > 0 && (
                 <div className="hidden md:flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-lg p-1.5">
                   <div className="flex items-center gap-2 pl-2">
                     <span className={`h-2.5 w-2.5 rounded-full ${currentDevice?.is_online ? 'bg-emerald-500 ring-4 ring-emerald-100' : 'bg-slate-400'}`} />
@@ -146,7 +163,7 @@ export default function Navbar() {
                     ))}
                   </select>
                 </div>
-              ) : null}
+              )}
 
               {/* Full Device Navigation Tabs */}
               <nav className="hidden lg:flex items-center gap-1">
@@ -186,6 +203,10 @@ export default function Navbar() {
                 Semua Unit
               </Link>
             )}
+
+            <div className="hidden sm:flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 border border-emerald-200 text-[11px] font-medium text-emerald-800">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            </div>
 
             {/* Mobile Menu Button */}
             <button

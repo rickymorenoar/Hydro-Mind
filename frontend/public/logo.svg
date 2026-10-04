@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <rect width="100" height="100" rx="20" fill="#059669"/>
+  <!-- School badge / graduation cap icon as initial placeholder -->
+  <path d="M50 22 L85 38 L50 54 L15 38 Z" fill="#ffffff"/>
+  <path d="M28 45 L28 65 Q50 82 72 65 L72 45 L50 56 Z" fill="#ffffff" opacity="0.9"/>
+  <path d="M85 38 L85 62 L80 64 L80 40.5 Z" fill="#fef08a"/>
+</svg>
