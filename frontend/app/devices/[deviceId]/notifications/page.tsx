@@ -49,7 +49,7 @@ export default function DeviceNotificationsPage({
       {/* Notifications Header & Filter Toolbar */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
         <div>
-          <h2 className="font-bold text-base text-slate-900">Log Diagnostik & Notifikasi Anomali</h2>
+          <h2 className="font-bold text-base text-slate-900">Log Diagnostik & Notifikasi Masalah</h2>
           <p className="text-xs text-slate-500">
             Riwayat peringatan otomatis: kegagalan pompa/pipa tersumbat dan status baterai surya kritis
           </p>

@@ -47,7 +47,7 @@ export default function DeviceLayout({
     { label: 'Overview & Telemetri', href: `/devices/${deviceId}` },
     { label: 'Kontrol & Pengaturan Ambang', href: `/devices/${deviceId}/settings` },
     { label: 'Riwayat Grafik & Tren', href: `/devices/${deviceId}/history` },
-    { label: 'Log Notifikasi & Anomali', href: `/devices/${deviceId}/notifications` },
+    { label: 'Log Notifikasi ', href: `/devices/${deviceId}/notifications` },
   ];
 
   return (
@@ -78,8 +78,6 @@ export default function DeviceLayout({
           </div>
 
           <div className="flex items-center gap-3 text-xs text-slate-500 font-mono">
-            <span>Hardware: ESP32 DevKit V1</span>
-            <span>•</span>
             <span>Key: {currentDevice?.api_key_masked || '••••••••'}</span>
             <span>•</span>
             <span>Mode: {currentDevice?.setting?.mode || 'AUTO'}</span>

@@ -24,7 +24,7 @@ export default function NotificationTable({ notifications }: NotificationTablePr
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="mb-2 text-slate-300">
           <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
         </svg>
-        Tidak ada catatan insiden atau anomali sistem (Semua parameter beroperasi normal).
+        Tidak ada catatan insiden atau masalah sistem (Semua parameter beroperasi normal).
       </div>
     );
   }
