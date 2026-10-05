@@ -30,8 +30,47 @@ export default function NotificationTable({ notifications }: NotificationTablePr
   }
 
   return (
-    <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xs">
-      <div className="overflow-x-auto">
+    <div className="rounded-xl border border-slate-200 bg-white shadow-xs overflow-hidden">
+      {/* Mobile Card List View (Visible on screens < md) */}
+      <div className="md:hidden divide-y divide-slate-100">
+        {notifications.map((n, i) => {
+          const isClog = n.type === 'CLOG_OR_PUMP_FAIL';
+          return (
+            <div key={n.id || i} className="p-4 space-y-2.5">
+              <div className="flex items-center justify-between gap-2">
+                <span
+                  className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                    isClog
+                      ? 'bg-rose-50 text-rose-700 border border-rose-200'
+                      : 'bg-amber-50 text-amber-700 border border-amber-200'
+                  }`}
+                >
+                  <span className={`h-1.5 w-1.5 rounded-full ${isClog ? 'bg-rose-500' : 'bg-amber-500'}`} />
+                  {isClog ? 'Kerusakan Pompa / Pipa' : 'Baterai Surya Rendah'}
+                </span>
+
+                <span className="text-[10px] font-mono text-slate-400">
+                  {timeAgo(n.created_at)}
+                </span>
+              </div>
+
+              <p className="text-xs font-medium text-slate-800 leading-relaxed">
+                {n.message}
+              </p>
+
+              <div className="flex items-center justify-between text-[10px] text-slate-400 font-mono pt-1">
+                <span>{new Date(n.created_at).toLocaleString()}</span>
+                <span className="px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-200">
+                  Tercatat
+                </span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Desktop Table View (Visible on screens >= md) */}
+      <div className="hidden md:block overflow-x-auto">
         <table className="w-full text-left text-xs">
           <thead>
             <tr className="border-b border-slate-200 bg-slate-50 font-semibold text-slate-600">

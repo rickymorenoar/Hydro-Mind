@@ -10,10 +10,10 @@ export default function BatteryIndicator({ level, voltage }: BatteryIndicatorPro
   const isLow = clamped < 20;
 
   return (
-    <div className="space-y-3 p-4 bg-slate-50/70 rounded-xl border border-slate-200/80">
-      <div className="flex items-center justify-between">
+    <div className="space-y-3 p-3.5 sm:p-4 bg-slate-50/70 rounded-xl border border-slate-200/80">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
         <div className="flex items-center gap-2">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={isLow ? 'text-rose-500' : 'text-amber-500'}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={isLow ? 'text-rose-500 shrink-0' : 'text-amber-500 shrink-0'}>
             <rect x="2" y="7" width="16" height="10" rx="2" ry="2" />
             <line x1="22" y1="11" x2="22" y2="13" />
           </svg>
@@ -37,10 +37,10 @@ export default function BatteryIndicator({ level, voltage }: BatteryIndicatorPro
         </div>
       </div>
 
-      <div className="flex items-center justify-between text-[11px] text-slate-500 font-mono pt-1">
-        <span>Tegangan Cut-off: 9.0V</span>
+      <div className="flex flex-wrap items-center justify-between gap-1.5 text-[10px] sm:text-[11px] text-slate-500 font-mono pt-1">
+        <span>Cut-off: 9.0V</span>
         <span className={isLow ? 'text-rose-600 font-bold' : 'text-emerald-700 font-medium'}>
-          {isLow ? '⚠️ Peringatan: Level Kritis' : '● Pengisian SCC Surya Normal'}
+          {isLow ? '⚠️ Level Kritis' : '● Pengisian Surya Normal'}
         </span>
         <span>Nominal: 12.6V</span>
       </div>

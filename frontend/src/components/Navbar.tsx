@@ -94,7 +94,7 @@ export default function Navbar() {
                     HydroMind
                   </span>
                   <span className="rounded bg-emerald-50 px-1.5 py-0.5 text-[10px] font-mono font-semibold text-emerald-700 border border-emerald-200">
-                    RA-RISA CONNECT
+                    SMKN 2 Buduran
                   </span>
                 </div>
                 <p className="text-[11px] text-slate-500 leading-none">Smart Greenhouse Telemetry</p>
@@ -204,51 +204,77 @@ export default function Navbar() {
               </Link>
             )}
 
-            <div className="hidden sm:flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 border border-emerald-200 text-[11px] font-medium text-emerald-800">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            </div>
-
-            {/* Mobile Menu Button */}
+            {/* Smooth Animated Hamburger Menu Button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 rounded-lg text-slate-600 hover:bg-slate-100 border border-slate-200"
+              className="md:hidden relative flex h-9 w-9 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 border border-slate-200 transition-colors"
               aria-label="Toggle navigation"
             >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                {mobileMenuOpen ? <path d="M18 6L6 18M6 6l12 12" /> : <path d="M4 6h16M4 12h16M4 18h16" />}
-              </svg>
+              <div className="relative flex h-4 w-5 flex-col justify-between">
+                <span
+                  className={`h-0.5 w-full bg-slate-700 rounded-full transition-all duration-300 ease-in-out transform ${
+                    mobileMenuOpen ? 'translate-y-1.5 rotate-45' : ''
+                  }`}
+                />
+                <span
+                  className={`h-0.5 w-full bg-slate-700 rounded-full transition-all duration-200 ease-in-out ${
+                    mobileMenuOpen ? 'opacity-0 scale-x-0' : 'opacity-100'
+                  }`}
+                />
+                <span
+                  className={`h-0.5 w-full bg-slate-700 rounded-full transition-all duration-300 ease-in-out transform ${
+                    mobileMenuOpen ? '-translate-y-2 -rotate-45' : ''
+                  }`}
+                />
+              </div>
             </button>
           </div>
         </div>
 
-        {/* Mobile Dropdown Menu */}
-        {mobileMenuOpen && (
-          <div className="md:hidden border-t border-slate-200 py-3 space-y-2">
+        {/* Smooth Expandable Mobile Dropdown Menu Container */}
+        <div
+          className={`md:hidden grid transition-all duration-300 ease-in-out ${
+            mobileMenuOpen
+              ? 'grid-rows-[1fr] opacity-100 border-t border-slate-200 py-3'
+              : 'grid-rows-[0fr] opacity-0 py-0 border-transparent pointer-events-none'
+          }`}
+        >
+          <div className="overflow-hidden space-y-2.5 transition-transform duration-300 ease-in-out">
             {!isInsideDevice ? (
-              <div className="space-y-1">
+              <div className="space-y-1.5">
                 <Link
                   href="/"
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`block px-3 py-2 rounded-md text-xs font-semibold ${
-                    pathname === '/' ? 'bg-emerald-50 text-emerald-700' : 'text-slate-600 hover:bg-slate-100'
+                  className={`flex items-center gap-2 px-3.5 py-2.5 rounded-lg text-xs font-semibold transition-all ${
+                    pathname === '/'
+                      ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                      : 'text-slate-600 hover:bg-slate-100'
                   }`}
                 >
-                  📋 Daftar Unit ({devices.length} Unit)
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M4 6h16M4 12h16M4 18h16" />
+                  </svg>
+                  Daftar Unit ({devices.length} Unit)
                 </Link>
                 <Link
                   href="/guide"
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`block px-3 py-2 rounded-md text-xs font-semibold ${
-                    pathname === '/guide' ? 'bg-emerald-50 text-emerald-700' : 'text-slate-600 hover:bg-slate-100'
+                  className={`flex items-center gap-2 px-3.5 py-2.5 rounded-lg text-xs font-semibold transition-all ${
+                    pathname === '/guide'
+                      ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                      : 'text-slate-600 hover:bg-slate-100'
                   }`}
                 >
-                  📖 Panduan Sistem & Spesifikasi
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                  </svg>
+                  Panduan Sistem & Spesifikasi
                 </Link>
               </div>
             ) : (
               <div className="space-y-3">
                 {devices.length > 0 && (
-                  <div className="p-2 bg-slate-50 rounded-lg border border-slate-200 space-y-1">
+                  <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-200 space-y-1.5">
                     <span className="text-xs font-medium text-slate-500 block">Pilih Unit:</span>
                     <select
                       value={activeDeviceId || ''}
@@ -256,7 +282,7 @@ export default function Navbar() {
                         handleDeviceChange(e);
                         setMobileMenuOpen(false);
                       }}
-                      className="w-full bg-white text-slate-800 text-sm font-semibold rounded-md border border-slate-300 py-1.5 px-3"
+                      className="w-full bg-white text-slate-800 text-xs font-semibold rounded-lg border border-slate-300 py-2 px-3 focus:outline-none focus:border-emerald-500 cursor-pointer shadow-2xs"
                     >
                       {devices.map((d) => (
                         <option key={d.id} value={d.id}>
@@ -267,7 +293,7 @@ export default function Navbar() {
                   </div>
                 )}
 
-                <div className="grid grid-cols-2 gap-1">
+                <div className="grid grid-cols-2 gap-1.5">
                   {deviceTabs.map((link) => {
                     const isActive = pathname === link.href;
                     return (
@@ -275,12 +301,15 @@ export default function Navbar() {
                         key={link.href}
                         href={link.href}
                         onClick={() => setMobileMenuOpen(false)}
-                        className={`px-3 py-2 rounded-md text-xs font-medium ${
+                        className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
                           isActive
-                            ? 'bg-emerald-50 text-emerald-700 font-semibold border border-emerald-200'
+                            ? 'bg-emerald-50 text-emerald-700 font-semibold border border-emerald-200 shadow-2xs'
                             : 'text-slate-600 hover:bg-slate-100'
                         }`}
                       >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d={link.icon} />
+                        </svg>
                         {link.label}
                       </Link>
                     );
@@ -288,15 +317,18 @@ export default function Navbar() {
                   <Link
                     href="/"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="col-span-2 text-center px-3 py-2 rounded-md text-xs font-medium text-slate-700 bg-slate-100 mt-1"
+                    className="col-span-2 flex items-center justify-center gap-1.5 text-center px-3 py-2.5 rounded-lg text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors mt-1"
                   >
-                    ← Kembali ke Semua Unit
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M19 12H5M12 19l-7-7 7-7" />
+                    </svg>
+                    Kembali ke Semua Unit
                   </Link>
                 </div>
               </div>
             )}
           </div>
-        )}
+        </div>
       </div>
     </header>
   );

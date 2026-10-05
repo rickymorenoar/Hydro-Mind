@@ -42,7 +42,7 @@ export default function TrendChart({
 }: TrendChartProps) {
   if (!data || data.length === 0) {
     return (
-      <div className="flex h-56 flex-col items-center justify-center rounded-xl border border-slate-200 bg-white p-6 text-center text-xs text-slate-400">
+      <div className="flex h-48 sm:h-56 flex-col items-center justify-center rounded-xl border border-slate-200 bg-white p-6 text-center text-xs text-slate-400">
         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="mb-2 text-slate-300">
           <path d="M3 3v18h18M19 9l-5 5-4-4-3 3" />
         </svg>
@@ -61,16 +61,16 @@ export default function TrendChart({
   const gradId = `gradient-${label.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-xs space-y-4">
+    <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5 shadow-xs space-y-4">
       {/* Header & Stats Strip */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pb-3 border-b border-slate-100">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 pb-3 border-b border-slate-100">
         <div>
-          <h4 className="font-semibold text-sm text-slate-900">{label}</h4>
-          {sublabel && <p className="text-[11px] text-slate-500">{sublabel}</p>}
+          <h4 className="font-semibold text-xs sm:text-sm text-slate-900">{label}</h4>
+          {sublabel && <p className="text-[10px] sm:text-[11px] text-slate-500 mt-0.5">{sublabel}</p>}
         </div>
 
-        {/* Industrial KPI summary chips */}
-        <div className="flex items-center gap-3 font-mono text-[11px] bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200">
+        {/* Responsive KPI summary chips */}
+        <div className="flex flex-wrap items-center gap-2 font-mono text-[10px] sm:text-[11px] bg-slate-50 px-2.5 py-1.5 rounded-lg border border-slate-200 self-start sm:self-auto">
           <div>
             <span className="text-slate-400 mr-1">Terkini:</span>
             <span className="font-bold text-slate-800">{latestVal.toFixed(1)}{unit}</span>
@@ -82,16 +82,16 @@ export default function TrendChart({
           </div>
           <span className="text-slate-300">|</span>
           <div>
-            <span className="text-slate-400 mr-1">Min / Max:</span>
-            <span className="text-slate-700">{minVal.toFixed(1)} / {maxVal.toFixed(1)}{unit}</span>
+            <span className="text-slate-400 mr-1">Min/Max:</span>
+            <span className="text-slate-700">{minVal.toFixed(1)}/{maxVal.toFixed(1)}{unit}</span>
           </div>
         </div>
       </div>
 
-      {/* Chart Canvas */}
-      <div className="h-56 w-full">
+      {/* Responsive Chart Canvas */}
+      <div className="h-48 sm:h-56 w-full">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={data} margin={{ top: 10, right: 10, bottom: 0, left: -20 }}>
+          <AreaChart data={data} margin={{ top: 10, right: 10, bottom: 0, left: -25 }}>
             <defs>
               <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor={color} stopOpacity={0.25} />
@@ -102,12 +102,12 @@ export default function TrendChart({
             <XAxis
               dataKey="created_at"
               tickFormatter={formatTime}
-              tick={{ fontSize: 10, fill: '#94a3b8' }}
+              tick={{ fontSize: 9, fill: '#94a3b8' }}
               axisLine={{ stroke: '#e2e8f0' }}
               tickLine={false}
             />
             <YAxis
-              tick={{ fontSize: 10, fill: '#94a3b8', fontFamily: 'monospace' }}
+              tick={{ fontSize: 9, fill: '#94a3b8', fontFamily: 'monospace' }}
               axisLine={{ stroke: '#e2e8f0' }}
               tickLine={false}
               domain={['auto', 'auto']}
@@ -120,7 +120,7 @@ export default function TrendChart({
                 borderRadius: '8px',
                 border: '1px solid #e2e8f0',
                 boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.05)',
-                fontSize: '12px',
+                fontSize: '11px',
                 fontFamily: 'monospace',
               }}
             />

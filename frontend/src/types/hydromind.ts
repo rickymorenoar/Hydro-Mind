@@ -5,6 +5,7 @@ export interface Device {
   latest_reading: Reading | null;
   setting: DeviceSetting | null;
   is_online: boolean;
+  last_seen_diff?: string | null;
   created_at: string;
 }
 
@@ -16,6 +17,8 @@ export interface Reading {
   water_flow: number;
   battery_level: number;
   battery_voltage: number;
+  is_online?: boolean;
+  last_seen_diff?: string | null;
   created_at: string;
 }
 

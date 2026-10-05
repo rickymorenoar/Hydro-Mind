@@ -9,7 +9,7 @@ const char* SERVER_BASE_URL = "http://192.168.1.10:8000/api";
 
 const char* DEVICE_NAME = "Greenhouse ESP32 Unit 1";
 
-String apiKey = "";
+String apiKey = "EtRROuQNXnWQMsXCrQorbeH2ioX5MtkXMqTj1ajM";
 
 #define PIN_SOIL_ANALOG    34
 #define PIN_WATERFLOW      27

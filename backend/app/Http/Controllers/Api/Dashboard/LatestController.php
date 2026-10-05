@@ -14,8 +14,23 @@ class LatestController extends Controller
         $setting = $device->setting;
 
         if (!$reading) {
-            return response()->json(['message' => 'No readings yet'], 404);
+            return response()->json([
+                'soil_moisture'   => null,
+                'air_temp'        => null,
+                'air_humidity'    => null,
+                'pump_status'     => 'OFF',
+                'water_flow'      => 0.0,
+                'battery_level'   => null,
+                'battery_voltage' => null,
+                'mode'            => $setting?->mode ?? 'AUTO',
+                'is_online'       => false,
+                'last_seen_diff'  => null,
+                'created_at'      => null,
+                'has_data'        => false,
+            ], 200);
         }
+
+        $isOnline = $reading->created_at ? now()->diffInMinutes($reading->created_at) < 3 : false;
 
         return response()->json([
             'soil_moisture'   => $reading->soil_moisture,
@@ -26,6 +41,8 @@ class LatestController extends Controller
             'battery_level'   => $reading->battery_level,
             'battery_voltage' => $reading->battery_voltage,
             'mode'            => $setting?->mode ?? 'AUTO',
+            'is_online'       => $isOnline,
+            'last_seen_diff'  => $reading->created_at ? $reading->created_at->diffForHumans() : null,
             'created_at'      => $reading->created_at,
         ]);
     }
