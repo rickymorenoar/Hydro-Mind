@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { Eye, EyeOff, LogIn, AlertCircle, ShieldCheck, Loader2 } from 'lucide-react';
+import Link from 'next/link';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -44,120 +45,122 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-12rem)] flex flex-col justify-center items-center py-6 px-4 sm:px-6">
-      <div className="w-full max-w-md space-y-6">
-        
-        {/* Header Branding Card */}
-        <div className="text-center space-y-3">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl bg-white border border-slate-200 shadow-md">
-            <img
-              src={logoSrc}
-              alt="Logo SMKN 2 Buduran"
-              className="h-full w-full object-contain p-1"
-              onError={() => {
-                if (logoSrc === '/logo-smenda.webp') setLogoSrc('/logo.png');
-                else if (logoSrc === '/logo.png') setLogoSrc('/logo.svg');
-              }}
-            />
-          </div>
-          <div>
-            <h1 className="text-2xl font-black text-slate-900 tracking-tight sm:text-3xl">
-              HydroMind Login
+    <div className="w-full max-w-[380px] bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 shadow-md space-y-3.5 my-auto">
+      
+      {/* Compact Header Branding */}
+      <div className="flex items-center gap-3 pb-3 border-b border-slate-100">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white border border-slate-200 shadow-2xs">
+          <img
+            src={logoSrc}
+            alt="Logo SMKN 2 Buduran"
+            className="h-full w-full object-contain p-0.5"
+            onError={() => {
+              if (logoSrc === '/logo-smenda.webp') setLogoSrc('/logo.png');
+              else if (logoSrc === '/logo.png') setLogoSrc('/logo.svg');
+            }}
+          />
+        </div>
+        <div className="leading-tight">
+          <div className="flex items-center gap-1.5">
+            <h1 className="text-base font-black text-slate-900 tracking-tight">
+              HydroMind
             </h1>
-            <p className="text-xs sm:text-sm text-slate-500 mt-1">
-              Sistem Otomasi Irigasi & Telemetri IoT Greenhouse
-            </p>
-            <span className="inline-block mt-1.5 rounded-md bg-emerald-50 px-2.5 py-0.5 text-[11px] font-mono font-bold text-emerald-700 border border-emerald-200">
-              SMKN 2 Buduran Sidoarjo
+            <span className="rounded bg-emerald-50 px-1.5 py-0.2 text-[9px] font-mono font-bold text-emerald-700 border border-emerald-200">
+              SMKN 2 Buduran
             </span>
           </div>
+          <p className="text-[10px] text-slate-500 mt-0.5">
+            Smart Greenhouse IoT Portal
+          </p>
+        </div>
+      </div>
+
+      {/* Error Alert */}
+      {error && (
+        <div className="p-2 rounded-xl text-xs font-semibold bg-rose-50 text-rose-800 border border-rose-200 flex items-start gap-1.5">
+          <AlertCircle className="w-3.5 h-3.5 text-rose-600 mt-0.5 shrink-0" />
+          <span className="flex-1 text-[11px] leading-tight">{error}</span>
+        </div>
+      )}
+
+      {/* Form Fields */}
+      <form onSubmit={handleSubmit} className="space-y-2.5">
+        <div>
+          <label className="block text-[10px] font-bold text-slate-700 uppercase tracking-wider mb-1" htmlFor="email">
+            Alamat Email
+          </label>
+          <input
+            id="email"
+            type="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="nama@hydromind.local"
+            className="w-full bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
+          />
         </div>
 
-        {/* Login Form Box */}
-        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-5">
-          <div className="border-b border-slate-100 pb-3">
-            <h2 className="text-base font-bold text-slate-900">Masuk ke Sistem</h2>
-            <p className="text-xs text-slate-500 mt-0.5">Masukkan kredensial akun untuk mengakses dashboard</p>
-          </div>
-
-          {error && (
-            <div className="p-3.5 rounded-xl text-xs font-semibold bg-rose-50 text-rose-800 border border-rose-200 flex items-start gap-2.5">
-              <AlertCircle className="w-4 h-4 text-rose-600 mt-0.5 shrink-0" />
-              <span className="flex-1">{error}</span>
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5" htmlFor="email">
-                Alamat Email
-              </label>
-              <input
-                id="email"
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="example@hydromind.local"
-                className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5" htmlFor="password">
-                Kata Sandi
-              </label>
-              <div className="relative flex items-center">
-                <input
-                  id="password"
-                  type={showPassword ? 'text' : 'password'}
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="w-full bg-slate-50 border border-slate-300 rounded-xl pl-3.5 pr-10 py-2.5 text-xs text-slate-900 font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 text-slate-400 hover:text-slate-600 focus:outline-none p-1 cursor-pointer transition-colors"
-                  aria-label={showPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'}
-                  title={showPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'}
-                >
-                  {showPassword ? (
-                    <EyeOff className="w-4 h-4" />
-                  ) : (
-                    <Eye className="w-4 h-4" />
-                  )}
-                </button>
-              </div>
-            </div>
-
+        <div>
+          <label className="block text-[10px] font-bold text-slate-700 uppercase tracking-wider mb-1" htmlFor="password">
+            Kata Sandi
+          </label>
+          <div className="relative flex items-center">
+            <input
+              id="password"
+              type={showPassword ? 'text' : 'password'}
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
+              className="w-full bg-slate-50 border border-slate-300 rounded-lg pl-2.5 pr-8 py-1.5 text-xs text-slate-900 font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
+            />
             <button
-              type="submit"
-              disabled={loading}
-              className="w-full mt-2 flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold py-2.5 px-4 rounded-xl text-xs shadow-sm hover:shadow transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-2 text-slate-400 hover:text-slate-600 focus:outline-none p-0.5 cursor-pointer transition-colors"
+              aria-label={showPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'}
+              title={showPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'}
             >
-              {loading ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin text-white" />
-                  <span>Memverifikasi Akun...</span>
-                </>
+              {showPassword ? (
+                <EyeOff className="w-3.5 h-3.5" />
               ) : (
-                <>
-                  <span>Masuk Dashboard</span>
-                  <LogIn className="w-4 h-4" />
-                </>
+                <Eye className="w-3.5 h-3.5" />
               )}
             </button>
-          </form>
+          </div>
         </div>
 
-        {/* System security note */}
-        <div className="text-center flex items-center justify-center gap-1.5 text-[11px] text-slate-400">
-          <ShieldCheck className="w-3.5 h-3.5 text-slate-400" />
-          <span>Dilindungi dengan otentikasi peran (RBAC) & enkripsi sesi.</span>
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full mt-1 flex items-center justify-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold py-2 px-3 rounded-lg text-xs shadow-xs hover:shadow transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+        >
+          {loading ? (
+            <>
+              <Loader2 className="w-3.5 h-3.5 animate-spin text-white" />
+              <span>Memverifikasi...</span>
+            </>
+          ) : (
+            <>
+              <span>Masuk Dashboard</span>
+              <LogIn className="w-3.5 h-3.5" />
+            </>
+          )}
+        </button>
+      </form>
+
+      {/* Footer Navigation & Security */}
+      <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+        <div className="flex items-center gap-1">
+          <ShieldCheck className="w-3 h-3 text-slate-400 shrink-0" />
+          <span>Sesi Terenkripsi</span>
         </div>
+        <Link
+          href="/"
+          className="text-slate-500 hover:text-emerald-700 font-medium transition-colors"
+        >
+          Lihat Unit →
+        </Link>
       </div>
     </div>
   );
