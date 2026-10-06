@@ -52,6 +52,9 @@ export default function AllDevicesPage() {
       ).toFixed(1)
     : '0';
 
+  // RBAC permissions
+  const canAddDevice = role === 'admin' || role === 'operator';
+
   return (
     <div className="space-y-4 sm:space-y-6">
       {/* Fleet Overview Header */}
@@ -70,7 +73,7 @@ export default function AllDevicesPage() {
           </p>
         </div>
 
-        {role === 'admin' && (
+        {canAddDevice && (
           <button
             onClick={() => setModalOpen(true)}
             className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold shadow-xs transition-colors w-full sm:w-auto cursor-pointer shrink-0"
@@ -159,15 +162,21 @@ export default function AllDevicesPage() {
               </p>
             </div>
             <div className="flex flex-col sm:flex-row items-center gap-2.5 pt-2 w-full sm:w-auto">
-              <button
-                onClick={() => setModalOpen(true)}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold shadow-xs transition-colors cursor-pointer"
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <path d="M12 5v14M5 12h14" />
-                </svg>
-                Daftarkan Perangkat Pertama
-              </button>
+              {canAddDevice ? (
+                <button
+                  onClick={() => setModalOpen(true)}
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold shadow-xs transition-colors cursor-pointer"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <path d="M12 5v14M5 12h14" />
+                  </svg>
+                  Daftarkan Perangkat Pertama
+                </button>
+              ) : (
+                <div className="text-xs text-slate-500 bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl">
+                  🔒 Pendaftaran unit ESP32 baru hanya dapat dilakukan oleh <strong className="text-indigo-600 font-bold">Admin</strong> atau <strong className="text-sky-600 font-bold">Operator</strong>.
+                </div>
+              )}
 
               <Link
                 href="/guide"
@@ -178,6 +187,8 @@ export default function AllDevicesPage() {
             </div>
           </div>
         )}
+
+
       </div>
 
       {/* Provisioning Dialog */}

@@ -261,13 +261,14 @@ export default function UsersManagementPage() {
               <span className="text-xs font-bold text-sky-950">Role: Operator</span>
             </div>
             <span className="text-[10px] font-mono bg-sky-50 text-sky-700 border border-sky-200 px-2 py-0.5 rounded-full font-bold">
-              SETTING
+              SETTING & DEVICE
             </span>
           </div>
           <p className="text-[11px] text-slate-600 leading-relaxed">
-            Akses operasional: Mengubah mode kerja dan batas kelembapan tanah, tetapi <span className="font-semibold text-slate-700">tidak dapat mengelola user</span>.
+            Akses operasional: Mendaftarkan unit ESP32 baru, mengubah mode kerja, dan mengatur ambang batas kelembapan tanah.
           </p>
         </div>
+
 
         {/* Member Card */}
         <div className="p-4 bg-white rounded-2xl border border-emerald-100 shadow-xs hover:border-emerald-200 transition-all space-y-2 relative overflow-hidden">

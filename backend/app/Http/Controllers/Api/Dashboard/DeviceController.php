@@ -28,9 +28,18 @@ class DeviceController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
+        $user = auth('sanctum')->user();
+        if ($user && $user->role === 'member') {
+            return response()->json([
+                'message' => 'Akses ditolak: Akun dengan role Member tidak memiliki hak untuk mendaftarkan perangkat baru.'
+            ], 403);
+        }
+
+
         $request->validate([
             'name' => 'required|string|max:255',
         ]);
+
 
         $device = Device::create([
             'name'    => $request->input('name'),
