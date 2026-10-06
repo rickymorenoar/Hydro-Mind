@@ -6,8 +6,10 @@ import DeviceCard from '@/components/DeviceCard';
 import AddDeviceModal from '@/components/AddDeviceModal';
 import type { Device } from '@/types/hydromind';
 import { getDevices, createDevice } from '@/lib/apiClient';
+import { useAuth } from '@/context/AuthContext';
 
 export default function AllDevicesPage() {
+  const { role, isAuthenticated } = useAuth();
   const [devices, setDevices] = useState<Device[]>([]);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
@@ -68,16 +70,19 @@ export default function AllDevicesPage() {
           </p>
         </div>
 
-        <button
-          onClick={() => setModalOpen(true)}
-          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold shadow-xs transition-colors w-full sm:w-auto cursor-pointer"
-        >
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-            <path d="M12 5v14M5 12h14" />
-          </svg>
-          Registrasi Device Baru
-        </button>
+        {role === 'admin' && (
+          <button
+            onClick={() => setModalOpen(true)}
+            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold shadow-xs transition-colors w-full sm:w-auto cursor-pointer shrink-0"
+          >
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <path d="M12 5v14M5 12h14" />
+            </svg>
+            Registrasi Device Baru
+          </button>
+        )}
       </div>
+
 
       {/* Fleet KPI Summary Banner */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3">

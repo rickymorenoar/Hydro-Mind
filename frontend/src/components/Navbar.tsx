@@ -5,10 +5,13 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import type { Device } from '@/types/hydromind';
 import { getDevices } from '@/lib/apiClient';
+import { useAuth } from '@/context/AuthContext';
 
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
+  const { user, role, isAuthenticated, logout } = useAuth();
+
   const [devices, setDevices] = useState<Device[]>([]);
   const [activeDeviceId, setActiveDeviceId] = useState<number | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -25,8 +28,12 @@ export default function Navbar() {
     }
   }, [pathname]);
 
-  // Fetch real devices from backend
+  // Fetch real devices from backend only if authenticated
   useEffect(() => {
+    if (!isAuthenticated) {
+      setDevices([]);
+      return;
+    }
     getDevices()
       .then((data) => {
         if (Array.isArray(data)) {
@@ -39,7 +46,7 @@ export default function Navbar() {
       .catch(() => {
         setDevices([]);
       });
-  }, [pathname]);
+  }, [pathname, isAuthenticated]);
 
   const handleDeviceChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newId = parseInt(e.target.value, 10);
@@ -63,6 +70,10 @@ export default function Navbar() {
     : [];
 
   const currentDevice = devices.find((d) => d.id === activeDeviceId);
+
+  if (pathname === '/login' || !isAuthenticated) {
+    return null;
+  }
 
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur shadow-xs">
@@ -103,8 +114,8 @@ export default function Navbar() {
           </div>
 
           {/* ========================================================= */}
-          {/* CASE A: USER IS ON INITIAL / HOME / GUIDE PAGE           */}
-          {/* Shows ONLY: "Daftar Unit" and "Panduan Sistem"            */}
+          {/* CASE A: USER IS ON INITIAL / HOME / GUIDE / USERS PAGE    */}
+          {/* Shows: "Daftar Unit", "Panduan Sistem", and Admin "Users"  */}
           {/* ========================================================= */}
           {!isInsideDevice && (
             <nav className="hidden md:flex items-center gap-2">
@@ -135,6 +146,23 @@ export default function Navbar() {
                 </svg>
                 Panduan Sistem
               </Link>
+
+              {/* ADMIN-ONLY NAVIGATION LINK */}
+              {role === 'admin' && (
+                <Link
+                  href="/users"
+                  className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-semibold transition-all ${
+                    pathname === '/users'
+                      ? 'bg-indigo-50 text-indigo-700 border border-indigo-200 shadow-2xs'
+                      : 'text-indigo-600 hover:text-indigo-900 hover:bg-indigo-50/50'
+                  }`}
+                >
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                  </svg>
+                  Kelola Pengguna
+                </Link>
+              )}
             </nav>
           )}
 
@@ -190,8 +218,44 @@ export default function Navbar() {
             </>
           )}
 
-          {/* Right Header Status & Action */}
-          <div className="flex items-center gap-3">
+          {/* Right Header: User Profile & Actions */}
+          <div className="flex items-center gap-2.5">
+            {/* User Profile / Login Button */}
+            {isAuthenticated && user ? (
+              <div className="flex items-center gap-2">
+                <div className="hidden sm:flex flex-col items-end text-right leading-tight">
+                  <span className="text-xs font-bold text-slate-800">{user.name}</span>
+                  <span className="text-[10px] font-mono">
+                    {user.role === 'admin' && <span className="text-indigo-600 font-bold">👑 Admin</span>}
+                    {user.role === 'operator' && <span className="text-sky-600 font-bold">🛠️ Operator</span>}
+                    {user.role === 'member' && <span className="text-emerald-600 font-bold">👁️ Member</span>}
+                  </span>
+                </div>
+
+                <button
+                  onClick={() => logout()}
+                  title="Keluar dari akun"
+                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-slate-200 hover:border-rose-200 bg-slate-50 hover:bg-rose-50 text-slate-600 hover:text-rose-600 text-xs font-semibold transition-colors cursor-pointer"
+                >
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                  </svg>
+                  <span className="hidden sm:inline">Keluar</span>
+                </button>
+              </div>
+            ) : (
+              <Link
+                href="/login"
+                className="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-lg text-xs shadow-2xs transition-all"
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3" />
+                </svg>
+                <span>Masuk</span>
+              </Link>
+            )}
+
+            {/* Back to all units button if inside device */}
             {isInsideDevice && (
               <Link
                 href="/"
@@ -240,6 +304,27 @@ export default function Navbar() {
           }`}
         >
           <div className="overflow-hidden space-y-2.5 transition-transform duration-300 ease-in-out">
+            {/* User status for mobile */}
+            {isAuthenticated && user && (
+              <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between">
+                <div>
+                  <span className="text-xs font-bold text-slate-800 block">{user.name}</span>
+                  <span className="text-[10px] font-mono text-slate-500">
+                    Role: <span className="uppercase font-bold text-emerald-700">{user.role}</span>
+                  </span>
+                </div>
+                <button
+                  onClick={() => {
+                    logout();
+                    setMobileMenuOpen(false);
+                  }}
+                  className="text-xs font-semibold text-rose-600 bg-rose-50 px-2.5 py-1 rounded-lg border border-rose-200 hover:bg-rose-100"
+                >
+                  Keluar
+                </button>
+              </div>
+            )}
+
             {!isInsideDevice ? (
               <div className="space-y-1.5">
                 <Link
@@ -270,6 +355,23 @@ export default function Navbar() {
                   </svg>
                   Panduan Sistem & Spesifikasi
                 </Link>
+
+                {role === 'admin' && (
+                  <Link
+                    href="/users"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`flex items-center gap-2 px-3.5 py-2.5 rounded-lg text-xs font-semibold transition-all ${
+                      pathname === '/users'
+                        ? 'bg-indigo-50 text-indigo-700 border border-indigo-200'
+                        : 'text-indigo-600 hover:bg-indigo-50'
+                    }`}
+                  >
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    Kelola Pengguna (Admin)
+                  </Link>
+                )}
               </div>
             ) : (
               <div className="space-y-3">
@@ -333,3 +435,4 @@ export default function Navbar() {
     </header>
   );
 }
+

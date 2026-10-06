@@ -1,3 +1,13 @@
+export type UserRole = 'admin' | 'operator' | 'member';
+
+export interface User {
+  id: number;
+  name: string;
+  email: string;
+  role: UserRole;
+  created_at: string;
+}
+
 export interface Device {
   id: number;
   name: string;

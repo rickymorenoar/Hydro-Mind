@@ -4,6 +4,8 @@ import { use, useEffect, useState } from 'react';
 import ModeToggle from '@/components/ModeToggle';
 import ThresholdForm from '@/components/ThresholdForm';
 import { getLatest, updateSettings } from '@/lib/apiClient';
+import { useAuth } from '@/context/AuthContext';
+import Link from 'next/link';
 
 export default function DeviceSettingsPage({
   params,
@@ -12,6 +14,7 @@ export default function DeviceSettingsPage({
 }) {
   const resolvedParams = use(params);
   const deviceId = parseInt(resolvedParams.deviceId, 10);
+  const { role, isAuthenticated } = useAuth();
 
   const [mode, setMode] = useState<'AUTO' | 'MANUAL'>('AUTO');
   const [pumpCmd, setPumpCmd] = useState<'ON' | 'OFF'>('OFF');
@@ -19,6 +22,10 @@ export default function DeviceSettingsPage({
   const [moistureUpper, setMoistureUpper] = useState(70);
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
+  // RBAC Permission Check
+  const canEdit = role === 'admin' || role === 'operator';
+  const isMember = role === 'member' || !isAuthenticated;
 
   useEffect(() => {
     getLatest(deviceId)
@@ -29,6 +36,10 @@ export default function DeviceSettingsPage({
   }, [deviceId]);
 
   const handleModeChange = async (newMode: 'AUTO' | 'MANUAL') => {
+    if (!canEdit) {
+      setToast({ type: 'error', text: 'Akses ditolak: Hanya Admin atau Operator yang dapat mengubah mode kerja.' });
+      return;
+    }
     setLoading(true);
     setMode(newMode);
     try {
@@ -42,6 +53,10 @@ export default function DeviceSettingsPage({
   };
 
   const handlePumpCommand = async (cmd: 'ON' | 'OFF') => {
+    if (!canEdit) {
+      setToast({ type: 'error', text: 'Akses ditolak: Hanya Admin atau Operator yang dapat mengontrol saklar pompa.' });
+      return;
+    }
     setLoading(true);
     setPumpCmd(cmd);
     try {
@@ -58,6 +73,10 @@ export default function DeviceSettingsPage({
   };
 
   const handleThresholdSubmit = async (lower: number, upper: number) => {
+    if (!canEdit) {
+      setToast({ type: 'error', text: 'Akses ditolak: Hanya Admin atau Operator yang dapat mengubah ambang batas.' });
+      return;
+    }
     setLoading(true);
     try {
       await updateSettings(deviceId, { moisture_lower: lower, moisture_upper: upper });
@@ -76,6 +95,43 @@ export default function DeviceSettingsPage({
 
   return (
     <div className="max-w-4xl space-y-4 sm:space-y-6">
+      {/* Role Notice Banner */}
+      {isMember ? (
+        <div className="p-4 bg-amber-50 rounded-2xl border border-amber-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+          <div className="flex items-center gap-2.5 text-amber-800">
+            <span className="text-base">🔒</span>
+            <div>
+              <span className="font-bold block">Mode Tinjau / Read-Only (Role: {role || 'Tamu'})</span>
+              <span className="text-amber-700/90 text-[11px]">
+                Pengaturan parameter dan saklar relay dinonaktifkan. Silakan login sebagai Admin atau Operator untuk melakukan perubahan.
+              </span>
+            </div>
+          </div>
+          {!isAuthenticated && (
+            <Link
+              href="/login"
+              className="inline-flex items-center justify-center gap-1.5 bg-amber-600 hover:bg-amber-700 text-white font-bold px-3.5 py-1.5 rounded-xl text-xs shrink-0 transition-colors"
+            >
+              Masuk Akun
+            </Link>
+          )}
+        </div>
+      ) : role === 'operator' ? (
+        <div className="p-3.5 bg-sky-50 rounded-2xl border border-sky-200 flex items-center gap-2.5 text-xs text-sky-900">
+          <span className="text-base">🛠️</span>
+          <span>
+            <strong className="font-bold">Akses Operator Aktif:</strong> Anda memiliki hak akses untuk mengatur ambang batas kelembapan dan mode kerja pompa.
+          </span>
+        </div>
+      ) : (
+        <div className="p-3.5 bg-indigo-50 rounded-2xl border border-indigo-200 flex items-center gap-2.5 text-xs text-indigo-900">
+          <span className="text-base">👑</span>
+          <span>
+            <strong className="font-bold">Akses Administrator (Full Control):</strong> Anda memiliki kendali penuh atas semua fitur sistem.
+          </span>
+        </div>
+      )}
+
       {/* Feedback Toast */}
       {toast && (
         <div
@@ -117,7 +173,7 @@ export default function DeviceSettingsPage({
             </span>
           </div>
           <div className="self-start sm:self-auto">
-            <ModeToggle mode={mode} onToggle={handleModeChange} disabled={loading} />
+            <ModeToggle mode={mode} onToggle={handleModeChange} disabled={loading || !canEdit} />
           </div>
         </div>
 
@@ -138,16 +194,16 @@ export default function DeviceSettingsPage({
             <button
               type="button"
               onClick={() => handlePumpCommand('ON')}
-              disabled={mode === 'AUTO' || loading || pumpCmd === 'ON'}
-              className="px-4 py-2.5 bg-sky-600 hover:bg-sky-700 text-white text-xs font-semibold rounded-lg shadow-xs transition-colors disabled:opacity-40 disabled:cursor-not-allowed text-center"
+              disabled={mode === 'AUTO' || loading || pumpCmd === 'ON' || !canEdit}
+              className="px-4 py-2.5 bg-sky-600 hover:bg-sky-700 text-white text-xs font-semibold rounded-lg shadow-xs transition-colors disabled:opacity-40 disabled:cursor-not-allowed text-center cursor-pointer"
             >
               Nyalakan (ON)
             </button>
             <button
               type="button"
               onClick={() => handlePumpCommand('OFF')}
-              disabled={mode === 'AUTO' || loading || pumpCmd === 'OFF'}
-              className="px-4 py-2.5 bg-slate-700 hover:bg-slate-800 text-white text-xs font-semibold rounded-lg shadow-xs transition-colors disabled:opacity-40 disabled:cursor-not-allowed text-center"
+              disabled={mode === 'AUTO' || loading || pumpCmd === 'OFF' || !canEdit}
+              className="px-4 py-2.5 bg-slate-700 hover:bg-slate-800 text-white text-xs font-semibold rounded-lg shadow-xs transition-colors disabled:opacity-40 disabled:cursor-not-allowed text-center cursor-pointer"
             >
               Matikan (OFF)
             </button>
@@ -169,6 +225,7 @@ export default function DeviceSettingsPage({
           initialUpper={moistureUpper}
           onSubmit={handleThresholdSubmit}
           loading={loading}
+          disabled={!canEdit}
         />
       </div>
 
@@ -193,3 +250,4 @@ export default function DeviceSettingsPage({
     </div>
   );
 }
+

@@ -7,6 +7,7 @@ interface ThresholdFormProps {
   initialUpper: number;
   onSubmit: (lower: number, upper: number) => void;
   loading?: boolean;
+  disabled?: boolean;
 }
 
 export default function ThresholdForm({
@@ -14,6 +15,7 @@ export default function ThresholdForm({
   initialUpper,
   onSubmit,
   loading = false,
+  disabled = false,
 }: ThresholdFormProps) {
   const [lower, setLower] = useState(initialLower);
   const [upper, setUpper] = useState(initialUpper);
@@ -21,6 +23,7 @@ export default function ThresholdForm({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (disabled) return;
     if (lower >= upper) {
       setError('Batas bawah (start siram) harus lebih rendah dari batas atas (stop siram).');
       return;
@@ -80,9 +83,10 @@ export default function ThresholdForm({
               min="0"
               max="100"
               step="1"
+              disabled={disabled}
               value={lower}
               onChange={(e) => setLower(Number(e.target.value))}
-              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-mono font-medium text-slate-900 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 focus:outline-none"
+              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-mono font-medium text-slate-900 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 focus:outline-none disabled:bg-slate-100 disabled:text-slate-500 disabled:cursor-not-allowed"
             />
             <span className="absolute right-3 top-2 text-xs font-mono text-slate-400 font-semibold">%</span>
           </div>
@@ -101,9 +105,10 @@ export default function ThresholdForm({
               min="0"
               max="100"
               step="1"
+              disabled={disabled}
               value={upper}
               onChange={(e) => setUpper(Number(e.target.value))}
-              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-mono font-medium text-slate-900 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 focus:outline-none"
+              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-mono font-medium text-slate-900 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 focus:outline-none disabled:bg-slate-100 disabled:text-slate-500 disabled:cursor-not-allowed"
             />
             <span className="absolute right-3 top-2 text-xs font-mono text-slate-400 font-semibold">%</span>
           </div>
@@ -119,15 +124,18 @@ export default function ThresholdForm({
         </div>
       )}
 
-      <div className="flex justify-end pt-2">
-        <button
-          type="submit"
-          disabled={loading}
-          className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold shadow-xs transition-colors disabled:opacity-50"
-        >
-          {loading ? 'Menyimpan ke Controller...' : 'Simpan Parameter Ambang Batas'}
-        </button>
-      </div>
+      {!disabled && (
+        <div className="flex justify-end pt-2">
+          <button
+            type="submit"
+            disabled={loading}
+            className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold shadow-xs transition-colors disabled:opacity-50 cursor-pointer"
+          >
+            {loading ? 'Menyimpan ke Controller...' : 'Simpan Parameter Ambang Batas'}
+          </button>
+        </div>
+      )}
     </form>
   );
 }
+

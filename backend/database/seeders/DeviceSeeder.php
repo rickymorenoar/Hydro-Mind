@@ -16,24 +16,50 @@ class DeviceSeeder extends Seeder
 {
     public function run(): void
     {
-        // Create admin user
-        User::firstOrCreate(
+        // 1. Create Default Users (3 Roles)
+        User::updateOrCreate(
             ['email' => 'admin@hydromind.local'],
             [
-                'name' => 'Admin',
+                'name' => 'Administrator HydroMind',
+                'role' => 'admin',
                 'password' => Hash::make('password'),
             ]
         );
 
+        User::updateOrCreate(
+            ['email' => 'operator@hydromind.local'],
+            [
+                'name' => 'Operator Greenhouse',
+                'role' => 'operator',
+                'password' => Hash::make('password'),
+            ]
+        );
+
+        User::updateOrCreate(
+            ['email' => 'member@hydromind.local'],
+            [
+                'name' => 'Member / Pengamat',
+                'role' => 'member',
+                'password' => Hash::make('password'),
+            ]
+        );
+
+        // 2. Create Default Devices (including user configured ESP32 device)
         $devicesData = [
-            ['name' => 'Greenhouse Balkon 1'],
-            ['name' => 'Greenhouse Balkon 2'],
+            [
+                'name' => 'Greenhouse ESP32 Unit 1',
+                'api_key' => 'lJEieys6OtZeZbckLUj1TNMrMnJ6xHCTYack8TyG',
+            ],
+            [
+                'name' => 'Greenhouse Balkon 2',
+                'api_key' => Str::random(40),
+            ],
         ];
 
         foreach ($devicesData as $i => $dd) {
             $device = Device::create([
                 'name'    => $dd['name'],
-                'api_key' => Str::random(40),
+                'api_key' => $dd['api_key'],
             ]);
 
             Setting::create([

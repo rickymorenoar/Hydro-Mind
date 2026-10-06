@@ -9,18 +9,51 @@ use App\Http\Controllers\Api\Dashboard\LatestController;
 use App\Http\Controllers\Api\Dashboard\HistoryController;
 use App\Http\Controllers\Api\Dashboard\NotificationController;
 use App\Http\Controllers\Api\Dashboard\SettingsController;
+use App\Http\Controllers\Api\Dashboard\UserController;
 
 /*
 |--------------------------------------------------------------------------
-| Auth routes (public / optional admin authentication)
+| Public Authentication Routes
 |--------------------------------------------------------------------------
 */
-Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('/register', [AuthController::class, 'register']);
 
 /*
 |--------------------------------------------------------------------------
-| Device (ESP32) routes – protected by X-API-KEY middleware
+| Authenticated User Routes (Sanctum)
+|--------------------------------------------------------------------------
+*/
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/me', [AuthController::class, 'me']);
+    Route::post('/logout', [AuthController::class, 'logout']);
+
+    // Admin-Only: Manajemen Pengguna
+    Route::middleware('role:admin')->prefix('dashboard/users')->group(function () {
+        Route::get('/', [UserController::class, 'index']);
+        Route::post('/', [UserController::class, 'store']);
+        Route::delete('/{user}', [UserController::class, 'destroy']);
+    });
+
+    // Dashboard REST API Routes (Devices, Telemetry, History, Settings)
+    Route::prefix('dashboard')->group(function () {
+        // Read-only monitoring (Semua role terautentikasi: Admin, Operator, Member)
+        Route::get('/devices', [DeviceController::class, 'index']);
+        Route::get('/devices/{device}/latest', [LatestController::class, 'show']);
+        Route::get('/devices/{device}/history', [HistoryController::class, 'index']);
+        Route::get('/devices/{device}/notifications', [NotificationController::class, 'index']);
+
+        // Registrasi Perangkat baru (Khusus Admin)
+        Route::middleware('role:admin')->post('/devices', [DeviceController::class, 'store']);
+
+        // Ubah Pengaturan Ambang & Mode Pompa (Admin & Operator)
+        Route::middleware('role:admin,operator')->post('/devices/{device}/settings', [SettingsController::class, 'update']);
+    });
+});
+
+/*
+|--------------------------------------------------------------------------
+| Device (ESP32) Routes – Protected by X-API-KEY middleware
 |--------------------------------------------------------------------------
 */
 Route::middleware('device.auth')->prefix('device')->group(function () {
@@ -28,16 +61,3 @@ Route::middleware('device.auth')->prefix('device')->group(function () {
     Route::get('/command', [CommandController::class, 'show']);
 });
 
-/*
-|--------------------------------------------------------------------------
-| Dashboard REST API routes (Devices, Telemetry, History, Settings)
-|--------------------------------------------------------------------------
-*/
-Route::prefix('dashboard')->group(function () {
-    Route::get('/devices', [DeviceController::class, 'index']);
-    Route::post('/devices', [DeviceController::class, 'store']);
-    Route::get('/devices/{device}/latest', [LatestController::class, 'show']);
-    Route::get('/devices/{device}/history', [HistoryController::class, 'index']);
-    Route::get('/devices/{device}/notifications', [NotificationController::class, 'index']);
-    Route::post('/devices/{device}/settings', [SettingsController::class, 'update']);
-});

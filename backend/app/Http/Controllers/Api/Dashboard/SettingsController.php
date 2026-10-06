@@ -11,6 +11,13 @@ class SettingsController extends Controller
 {
     public function update(UpdateSettingsRequest $request, Device $device): JsonResponse
     {
+        $user = auth('sanctum')->user();
+        if ($user && $user->role === 'member') {
+            return response()->json([
+                'message' => 'Akses ditolak: Akun dengan role Member hanya memiliki hak akses baca-saja (read-only).'
+            ], 403);
+        }
+
         $setting = $device->setting;
         $setting->update($request->validated());
 
@@ -21,4 +28,5 @@ class SettingsController extends Controller
             'moisture_upper' => $setting->moisture_upper,
         ]);
     }
+
 }

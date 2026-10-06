@@ -15,6 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'device.auth' => \App\Http\Middleware\AuthenticateDeviceApiKey::class,
+            'role'        => \App\Http\Middleware\RoleMiddleware::class,
         ]);
 
         // Explicitly exempt all API routes from CSRF verification
