@@ -32,7 +32,9 @@ class UserController extends Controller
             'name'     => 'required|string|max:255',
             'email'    => 'required|email|unique:users,email',
             'password' => 'required|string|min:6',
-            'role'     => ['required', Rule::in(['admin', 'operator', 'member'])],
+            'role'     => ['required', Rule::in(['operator', 'member'])],
+        ], [
+            'role.in' => 'Role Admin hanya dapat dibuat atau diubah langsung melalui database.',
         ]);
 
         $user = User::create([
@@ -59,7 +61,6 @@ class UserController extends Controller
      */
     public function destroy(Request $request, User $user): JsonResponse
     {
-        // Cegah admin menghapus dirinya sendiri yang sedang login
         if ($request->user() && $request->user()->id === $user->id) {
             return response()->json([
                 'message' => 'Anda tidak dapat menghapus akun Anda sendiri yang sedang aktif.',

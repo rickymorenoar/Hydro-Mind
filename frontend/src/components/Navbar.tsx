@@ -6,6 +6,23 @@ import { usePathname, useRouter } from 'next/navigation';
 import type { Device } from '@/types/hydromind';
 import { getDevices } from '@/lib/apiClient';
 import { useAuth } from '@/context/AuthContext';
+import {
+  LayoutGrid,
+  BookOpen,
+  Users,
+  Activity,
+  Sliders,
+  LineChart,
+  Bell,
+  LogOut,
+  LogIn,
+  ArrowLeft,
+  Crown,
+  Wrench,
+  Eye,
+  Menu,
+  X,
+} from 'lucide-react';
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -62,10 +79,10 @@ export default function Navbar() {
 
   const deviceTabs = activeDeviceId
     ? [
-        { label: 'Overview', href: `/devices/${activeDeviceId}`, icon: 'M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z' },
-        { label: 'Kontrol & Pengaturan', href: `/devices/${activeDeviceId}/settings`, icon: 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z' },
-        { label: 'Riwayat & Grafik', href: `/devices/${activeDeviceId}/history`, icon: 'M3 3v18h18 M19 9l-5 5-4-4-3 3' },
-        { label: 'Log Notifikasi', href: `/devices/${activeDeviceId}/notifications`, icon: 'M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9' },
+        { label: 'Overview', href: `/devices/${activeDeviceId}`, icon: Activity },
+        { label: 'Kontrol & Pengaturan', href: `/devices/${activeDeviceId}/settings`, icon: Sliders },
+        { label: 'Riwayat & Grafik', href: `/devices/${activeDeviceId}/history`, icon: LineChart },
+        { label: 'Log Notifikasi', href: `/devices/${activeDeviceId}/notifications`, icon: Bell },
       ]
     : [];
 
@@ -116,6 +133,7 @@ export default function Navbar() {
           {/* ========================================================= */}
           {/* CASE A: USER IS ON INITIAL / HOME / GUIDE / USERS PAGE    */}
           {/* Shows: "Daftar Unit", "Panduan Sistem", and Admin "Users"  */}
+          {/* All styled consistently with standard emerald highlight   */}
           {/* ========================================================= */}
           {!isInsideDevice && (
             <nav className="hidden md:flex items-center gap-2">
@@ -127,9 +145,7 @@ export default function Navbar() {
                     : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                 }`}
               >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
+                <LayoutGrid className="w-4 h-4" />
                 Daftar Unit ({devices.length})
               </Link>
 
@@ -141,25 +157,21 @@ export default function Navbar() {
                     : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                 }`}
               >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                </svg>
+                <BookOpen className="w-4 h-4" />
                 Panduan Sistem
               </Link>
 
-              {/* ADMIN-ONLY NAVIGATION LINK */}
+              {/* ADMIN-ONLY NAVIGATION LINK - Consistent styling */}
               {role === 'admin' && (
                 <Link
                   href="/users"
                   className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-semibold transition-all ${
                     pathname === '/users'
-                      ? 'bg-indigo-50 text-indigo-700 border border-indigo-200 shadow-2xs'
-                      : 'text-indigo-600 hover:text-indigo-900 hover:bg-indigo-50/50'
+                      ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-2xs'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                   }`}
                 >
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                  </svg>
+                  <Users className="w-4 h-4" />
                   Kelola Pengguna
                 </Link>
               )}
@@ -197,6 +209,7 @@ export default function Navbar() {
               <nav className="hidden lg:flex items-center gap-1">
                 {deviceTabs.map((link) => {
                   const isActive = pathname === link.href;
+                  const Icon = link.icon;
                   return (
                     <Link
                       key={link.href}
@@ -207,9 +220,7 @@ export default function Navbar() {
                           : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                       }`}
                     >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d={link.icon} />
-                      </svg>
+                      <Icon className="w-3.5 h-3.5" />
                       {link.label}
                     </Link>
                   );
@@ -225,10 +236,22 @@ export default function Navbar() {
               <div className="flex items-center gap-2">
                 <div className="hidden sm:flex flex-col items-end text-right leading-tight">
                   <span className="text-xs font-bold text-slate-800">{user.name}</span>
-                  <span className="text-[10px] font-mono">
-                    {user.role === 'admin' && <span className="text-indigo-600 font-bold">👑 Admin</span>}
-                    {user.role === 'operator' && <span className="text-sky-600 font-bold">🛠️ Operator</span>}
-                    {user.role === 'member' && <span className="text-emerald-600 font-bold">👁️ Member</span>}
+                  <span className="text-[10px] font-mono flex items-center gap-1">
+                    {user.role === 'admin' && (
+                      <span className="text-indigo-700 font-bold inline-flex items-center gap-1">
+                        <Crown className="w-3 h-3 text-indigo-600" /> Admin
+                      </span>
+                    )}
+                    {user.role === 'operator' && (
+                      <span className="text-sky-700 font-bold inline-flex items-center gap-1">
+                        <Wrench className="w-3 h-3 text-sky-600" /> Operator
+                      </span>
+                    )}
+                    {user.role === 'member' && (
+                      <span className="text-emerald-700 font-bold inline-flex items-center gap-1">
+                        <Eye className="w-3 h-3 text-emerald-600" /> Member
+                      </span>
+                    )}
                   </span>
                 </div>
 
@@ -237,9 +260,7 @@ export default function Navbar() {
                   title="Keluar dari akun"
                   className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-slate-200 hover:border-rose-200 bg-slate-50 hover:bg-rose-50 text-slate-600 hover:text-rose-600 text-xs font-semibold transition-colors cursor-pointer"
                 >
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                  </svg>
+                  <LogOut className="w-3.5 h-3.5" />
                   <span className="hidden sm:inline">Keluar</span>
                 </button>
               </div>
@@ -248,9 +269,7 @@ export default function Navbar() {
                 href="/login"
                 className="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-lg text-xs shadow-2xs transition-all"
               >
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3" />
-                </svg>
+                <LogIn className="w-3.5 h-3.5" />
                 <span>Masuk</span>
               </Link>
             )}
@@ -261,41 +280,23 @@ export default function Navbar() {
                 href="/"
                 className="hidden sm:inline-flex items-center gap-1.5 text-xs font-medium text-slate-600 hover:text-emerald-700 bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-md transition-colors"
               >
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M19 12H5M12 19l-7-7 7-7" />
-                </svg>
+                <ArrowLeft className="w-3.5 h-3.5" />
                 Semua Unit
               </Link>
             )}
 
-            {/* Smooth Animated Hamburger Menu Button */}
+            {/* Mobile Hamburger Menu Button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="md:hidden relative flex h-9 w-9 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 border border-slate-200 transition-colors"
               aria-label="Toggle navigation"
             >
-              <div className="relative flex h-4 w-5 flex-col justify-between">
-                <span
-                  className={`h-0.5 w-full bg-slate-700 rounded-full transition-all duration-300 ease-in-out transform ${
-                    mobileMenuOpen ? 'translate-y-1.5 rotate-45' : ''
-                  }`}
-                />
-                <span
-                  className={`h-0.5 w-full bg-slate-700 rounded-full transition-all duration-200 ease-in-out ${
-                    mobileMenuOpen ? 'opacity-0 scale-x-0' : 'opacity-100'
-                  }`}
-                />
-                <span
-                  className={`h-0.5 w-full bg-slate-700 rounded-full transition-all duration-300 ease-in-out transform ${
-                    mobileMenuOpen ? '-translate-y-2 -rotate-45' : ''
-                  }`}
-                />
-              </div>
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>
 
-        {/* Smooth Expandable Mobile Dropdown Menu Container */}
+        {/* Mobile Dropdown Menu Container */}
         <div
           className={`md:hidden grid transition-all duration-300 ease-in-out ${
             mobileMenuOpen
@@ -309,7 +310,7 @@ export default function Navbar() {
               <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between">
                 <div>
                   <span className="text-xs font-bold text-slate-800 block">{user.name}</span>
-                  <span className="text-[10px] font-mono text-slate-500">
+                  <span className="text-[10px] font-mono text-slate-500 flex items-center gap-1 mt-0.5">
                     Role: <span className="uppercase font-bold text-emerald-700">{user.role}</span>
                   </span>
                 </div>
@@ -318,8 +319,9 @@ export default function Navbar() {
                     logout();
                     setMobileMenuOpen(false);
                   }}
-                  className="text-xs font-semibold text-rose-600 bg-rose-50 px-2.5 py-1 rounded-lg border border-rose-200 hover:bg-rose-100"
+                  className="text-xs font-semibold text-rose-600 bg-rose-50 px-2.5 py-1 rounded-lg border border-rose-200 hover:bg-rose-100 inline-flex items-center gap-1 cursor-pointer"
                 >
+                  <LogOut className="w-3.5 h-3.5" />
                   Keluar
                 </button>
               </div>
@@ -336,9 +338,7 @@ export default function Navbar() {
                       : 'text-slate-600 hover:bg-slate-100'
                   }`}
                 >
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M4 6h16M4 12h16M4 18h16" />
-                  </svg>
+                  <LayoutGrid className="w-4 h-4" />
                   Daftar Unit ({devices.length} Unit)
                 </Link>
                 <Link
@@ -350,9 +350,7 @@ export default function Navbar() {
                       : 'text-slate-600 hover:bg-slate-100'
                   }`}
                 >
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                  </svg>
+                  <BookOpen className="w-4 h-4" />
                   Panduan Sistem & Spesifikasi
                 </Link>
 
@@ -362,14 +360,12 @@ export default function Navbar() {
                     onClick={() => setMobileMenuOpen(false)}
                     className={`flex items-center gap-2 px-3.5 py-2.5 rounded-lg text-xs font-semibold transition-all ${
                       pathname === '/users'
-                        ? 'bg-indigo-50 text-indigo-700 border border-indigo-200'
-                        : 'text-indigo-600 hover:bg-indigo-50'
+                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                        : 'text-slate-600 hover:bg-slate-100'
                     }`}
                   >
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                    </svg>
-                    Kelola Pengguna (Admin)
+                    <Users className="w-4 h-4" />
+                    Kelola Pengguna
                   </Link>
                 )}
               </div>
@@ -398,6 +394,7 @@ export default function Navbar() {
                 <div className="grid grid-cols-2 gap-1.5">
                   {deviceTabs.map((link) => {
                     const isActive = pathname === link.href;
+                    const Icon = link.icon;
                     return (
                       <Link
                         key={link.href}
@@ -409,9 +406,7 @@ export default function Navbar() {
                             : 'text-slate-600 hover:bg-slate-100'
                         }`}
                       >
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d={link.icon} />
-                        </svg>
+                        <Icon className="w-4 h-4" />
                         {link.label}
                       </Link>
                     );
@@ -421,9 +416,7 @@ export default function Navbar() {
                     onClick={() => setMobileMenuOpen(false)}
                     className="col-span-2 flex items-center justify-center gap-1.5 text-center px-3 py-2.5 rounded-lg text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors mt-1"
                   >
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M19 12H5M12 19l-7-7 7-7" />
-                    </svg>
+                    <ArrowLeft className="w-3.5 h-3.5" />
                     Kembali ke Semua Unit
                   </Link>
                 </div>
@@ -435,4 +428,3 @@ export default function Navbar() {
     </header>
   );
 }
-

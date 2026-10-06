@@ -5,6 +5,23 @@ import { useAuth } from '@/context/AuthContext';
 import { getUsers, createUser, deleteUser } from '@/lib/apiClient';
 import type { User, UserRole } from '@/types/hydromind';
 import Link from 'next/link';
+import {
+  Users,
+  UserPlus,
+  Crown,
+  Wrench,
+  Eye,
+  RefreshCw,
+  Trash2,
+  Lock,
+  ShieldAlert,
+  ShieldCheck,
+  CheckCircle2,
+  AlertCircle,
+  X,
+  ArrowLeft,
+  Info,
+} from 'lucide-react';
 
 export default function UsersManagementPage() {
   const { user: currentUser, role, isAuthenticated, isLoading: authLoading } = useAuth();
@@ -18,7 +35,7 @@ export default function UsersManagementPage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [userRole, setUserRole] = useState<UserRole>('member');
+  const [userRole, setUserRole] = useState<'operator' | 'member'>('operator');
   const [submitting, setSubmitting] = useState(false);
   const [modalError, setModalError] = useState<string | null>(null);
 
@@ -61,7 +78,7 @@ export default function UsersManagementPage() {
       setName('');
       setEmail('');
       setPassword('');
-      setUserRole('member');
+      setUserRole('operator');
       fetchUserList();
     } catch (err: any) {
       setModalError(err.message || 'Gagal menambahkan user baru.');
@@ -103,8 +120,8 @@ export default function UsersManagementPage() {
   if (!isAuthenticated) {
     return (
       <div className="max-w-md mx-auto my-12 bg-white rounded-3xl p-8 border border-slate-200 shadow-sm text-center space-y-4">
-        <div className="h-12 w-12 bg-amber-50 text-amber-600 border border-amber-200 rounded-2xl mx-auto flex items-center justify-center text-xl font-bold">
-          🔒
+        <div className="h-12 w-12 bg-amber-50 text-amber-600 border border-amber-200 rounded-2xl mx-auto flex items-center justify-center">
+          <Lock className="w-6 h-6" />
         </div>
         <div>
           <h2 className="text-lg font-bold text-slate-900">Autentikasi Diperlukan</h2>
@@ -117,9 +134,6 @@ export default function UsersManagementPage() {
           className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-2.5 rounded-xl text-xs shadow-xs transition-all"
         >
           <span>Masuk Sekarang</span>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-            <path d="M5 12h14M12 5l7 7-7 7" />
-          </svg>
         </Link>
       </div>
     );
@@ -129,14 +143,14 @@ export default function UsersManagementPage() {
   if (role !== 'admin') {
     return (
       <div className="max-w-lg mx-auto my-12 bg-white rounded-3xl p-8 border border-slate-200 shadow-sm text-center space-y-4">
-        <div className="h-12 w-12 bg-rose-50 text-rose-600 border border-rose-200 rounded-2xl mx-auto flex items-center justify-center text-xl font-bold">
-          ⛔
+        <div className="h-12 w-12 bg-rose-50 text-rose-600 border border-rose-200 rounded-2xl mx-auto flex items-center justify-center">
+          <ShieldAlert className="w-6 h-6" />
         </div>
         <div>
           <h2 className="text-lg font-bold text-slate-900">Akses Ditolak (403 Forbidden)</h2>
           <p className="text-xs text-slate-500 mt-1">
             Akun Anda saat ini memiliki role <strong className="uppercase text-slate-800 font-mono">[{role}]</strong>.
-            Halaman Manajemen Pengguna hanya dapat diakses oleh akun dengan role <strong className="text-indigo-600 font-mono">ADMIN</strong>.
+            Halaman Manajemen Pengguna hanya dapat diakses oleh akun dengan role <strong className="text-emerald-700 font-mono">ADMIN</strong>.
           </p>
         </div>
         <div className="p-3 bg-slate-50 rounded-xl text-left border border-slate-200 text-xs text-slate-600 space-y-1">
@@ -155,9 +169,7 @@ export default function UsersManagementPage() {
           href="/"
           className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-emerald-700 bg-slate-100 hover:bg-slate-200 px-4 py-2 rounded-lg transition-colors"
         >
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M19 12H5M12 19l-7-7 7-7" />
-          </svg>
+          <ArrowLeft className="w-3.5 h-3.5" />
           Kembali ke Beranda
         </Link>
       </div>
@@ -177,14 +189,18 @@ export default function UsersManagementPage() {
           }`}
         >
           <div className="flex items-center gap-2">
-            <span>{toast.type === 'success' ? '✓' : '⚠'}</span>
+            {toast.type === 'success' ? (
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+            ) : (
+              <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+            )}
             <span>{toast.text}</span>
           </div>
           <button
             onClick={() => setToast(null)}
-            className="text-slate-400 hover:text-slate-700 font-bold px-1.5 py-0.5 cursor-pointer"
+            className="text-slate-400 hover:text-slate-700 font-bold p-1 cursor-pointer"
           >
-            ✕
+            <X className="w-4 h-4" />
           </button>
         </div>
       )}
@@ -193,10 +209,11 @@ export default function UsersManagementPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-xs">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-              Manajemen Pengguna & Hak Akses (RBAC)
+            <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+              <Users className="w-6 h-6 text-emerald-600" />
+              Manajemen Pengguna & Hak Akses
             </h1>
-            <span className="rounded-md bg-indigo-50 px-2 py-0.5 text-[10px] font-mono font-bold text-indigo-700 border border-indigo-200">
+            <span className="rounded-md bg-emerald-50 px-2 py-0.5 text-[10px] font-mono font-bold text-emerald-700 border border-emerald-200">
               Admin Area
             </span>
           </div>
@@ -209,42 +226,64 @@ export default function UsersManagementPage() {
           onClick={() => setShowAddModal(true)}
           className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold py-2.5 px-4 rounded-xl text-xs shadow-xs hover:shadow transition-all cursor-pointer shrink-0"
         >
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-            <path d="M12 5v14M5 12h14" />
-          </svg>
+          <UserPlus className="w-4 h-4" />
           Tambah User Baru
         </button>
       </div>
 
-      {/* Role Guide Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-        <div className="p-4 bg-indigo-50/50 rounded-2xl border border-indigo-100 space-y-1">
+      {/* Role Guide Cards with Lucide Icons */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+        {/* Admin Card */}
+        <div className="p-4 bg-white rounded-2xl border border-indigo-100 shadow-xs hover:border-indigo-200 transition-all space-y-2 relative overflow-hidden">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-indigo-900">👑 Role: Admin</span>
-            <span className="text-[10px] font-mono bg-indigo-100 text-indigo-800 px-1.5 py-0.5 rounded font-bold">FULL</span>
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600">
+                <Crown className="w-4 h-4" />
+              </div>
+              <span className="text-xs font-bold text-indigo-950">Role: Admin</span>
+            </div>
+            <span className="text-[10px] font-mono bg-indigo-50 text-indigo-700 border border-indigo-200 px-2 py-0.5 rounded-full font-bold">
+              FULL ACCESS
+            </span>
           </div>
-          <p className="text-[11px] text-indigo-700/80 leading-relaxed">
+          <p className="text-[11px] text-slate-600 leading-relaxed">
             Akses total: Tambah/hapus user, ubah mode AUTO/MANUAL, atur ambang histeresis, dan kontrol saklar pompa manual.
           </p>
         </div>
 
-        <div className="p-4 bg-sky-50/50 rounded-2xl border border-sky-100 space-y-1">
+        {/* Operator Card */}
+        <div className="p-4 bg-white rounded-2xl border border-sky-100 shadow-xs hover:border-sky-200 transition-all space-y-2 relative overflow-hidden">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-sky-900">🛠️ Role: Operator</span>
-            <span className="text-[10px] font-mono bg-sky-100 text-sky-800 px-1.5 py-0.5 rounded font-bold">SETTING</span>
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-xl bg-sky-50 border border-sky-100 flex items-center justify-center text-sky-600">
+                <Wrench className="w-4 h-4" />
+              </div>
+              <span className="text-xs font-bold text-sky-950">Role: Operator</span>
+            </div>
+            <span className="text-[10px] font-mono bg-sky-50 text-sky-700 border border-sky-200 px-2 py-0.5 rounded-full font-bold">
+              SETTING
+            </span>
           </div>
-          <p className="text-[11px] text-sky-700/80 leading-relaxed">
-            Akses operasional: Dapat mengubah mode kerja dan batas kelembapan tanah, tetapi <span className="font-semibold">tidak dapat menambah/menghapus user</span>.
+          <p className="text-[11px] text-slate-600 leading-relaxed">
+            Akses operasional: Mengubah mode kerja dan batas kelembapan tanah, tetapi <span className="font-semibold text-slate-700">tidak dapat mengelola user</span>.
           </p>
         </div>
 
-        <div className="p-4 bg-emerald-50/50 rounded-2xl border border-emerald-100 space-y-1">
+        {/* Member Card */}
+        <div className="p-4 bg-white rounded-2xl border border-emerald-100 shadow-xs hover:border-emerald-200 transition-all space-y-2 relative overflow-hidden">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-emerald-900">👁️ Role: Member</span>
-            <span className="text-[10px] font-mono bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded font-bold">READ ONLY</span>
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600">
+                <Eye className="w-4 h-4" />
+              </div>
+              <span className="text-xs font-bold text-emerald-950">Role: Member</span>
+            </div>
+            <span className="text-[10px] font-mono bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded-full font-bold">
+              READ ONLY
+            </span>
           </div>
-          <p className="text-[11px] text-emerald-700/80 leading-relaxed">
-            Akses monitoring: Hanya dapat melihat statistik sensor, grafik telemetri, dan status unit. Tidak dapat mengubah konfigurasi.
+          <p className="text-[11px] text-slate-600 leading-relaxed">
+            Akses monitoring: Melihat statistik sensor, grafik telemetri, dan status unit secara real-time. Mode baca-saja.
           </p>
         </div>
       </div>
@@ -256,17 +295,9 @@ export default function UsersManagementPage() {
           <button
             onClick={fetchUserList}
             disabled={loading}
-            className="text-xs text-slate-500 hover:text-slate-800 flex items-center gap-1 font-medium transition-colors"
+            className="text-xs text-slate-500 hover:text-slate-800 flex items-center gap-1.5 font-medium transition-colors cursor-pointer"
           >
-            <svg
-              className={`h-3.5 w-3.5 ${loading ? 'animate-spin' : ''}`}
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-            </svg>
+            <RefreshCw className={`h-3.5 w-3.5 ${loading ? 'animate-spin text-emerald-600' : ''}`} />
             Refresh
           </button>
         </div>
@@ -303,18 +334,21 @@ export default function UsersManagementPage() {
                       <td className="px-5 py-3.5 font-mono text-slate-700">{u.email}</td>
                       <td className="px-5 py-3.5">
                         {u.role === 'admin' && (
-                          <span className="rounded-full bg-indigo-50 px-2.5 py-1 text-[11px] font-bold text-indigo-700 border border-indigo-200 inline-flex items-center gap-1">
-                            👑 Admin
+                          <span className="rounded-full bg-indigo-50 px-2.5 py-1 text-[11px] font-bold text-indigo-700 border border-indigo-200 inline-flex items-center gap-1.5">
+                            <Crown className="w-3.5 h-3.5 text-indigo-600" />
+                            Admin
                           </span>
                         )}
                         {u.role === 'operator' && (
-                          <span className="rounded-full bg-sky-50 px-2.5 py-1 text-[11px] font-bold text-sky-700 border border-sky-200 inline-flex items-center gap-1">
-                            🛠️ Operator
+                          <span className="rounded-full bg-sky-50 px-2.5 py-1 text-[11px] font-bold text-sky-700 border border-sky-200 inline-flex items-center gap-1.5">
+                            <Wrench className="w-3.5 h-3.5 text-sky-600" />
+                            Operator
                           </span>
                         )}
                         {u.role === 'member' && (
-                          <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-bold text-emerald-700 border border-emerald-200 inline-flex items-center gap-1">
-                            👁️ Member
+                          <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-bold text-emerald-700 border border-emerald-200 inline-flex items-center gap-1.5">
+                            <Eye className="w-3.5 h-3.5 text-emerald-600" />
+                            Member
                           </span>
                         )}
                       </td>
@@ -331,8 +365,9 @@ export default function UsersManagementPage() {
                         ) : (
                           <button
                             onClick={() => handleDeleteUser(u)}
-                            className="text-rose-600 hover:text-rose-800 font-semibold text-xs px-2.5 py-1 rounded-lg hover:bg-rose-50 transition-colors cursor-pointer"
+                            className="text-rose-600 hover:text-rose-800 font-semibold text-xs px-2.5 py-1 rounded-lg hover:bg-rose-50 transition-colors inline-flex items-center gap-1 cursor-pointer"
                           >
+                            <Trash2 className="w-3.5 h-3.5" />
                             Hapus
                           </button>
                         )}
@@ -352,20 +387,24 @@ export default function UsersManagementPage() {
           <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full border border-slate-200 shadow-2xl space-y-5">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div>
-                <h3 className="text-base font-bold text-slate-900">Tambah User Baru</h3>
-                <p className="text-xs text-slate-500">Daftarkan akun dan tetapkan hak aksesnya</p>
+                <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                  <UserPlus className="w-4 h-4 text-emerald-600" />
+                  Tambah User Baru
+                </h3>
+                <p className="text-xs text-slate-500">Daftarkan akun Operator atau Member baru</p>
               </div>
               <button
                 onClick={() => setShowAddModal(false)}
-                className="text-slate-400 hover:text-slate-700 text-lg font-bold px-2 py-1"
+                className="text-slate-400 hover:text-slate-700 p-1 cursor-pointer"
               >
-                ✕
+                <X className="w-5 h-5" />
               </button>
             </div>
 
             {modalError && (
-              <div className="p-3 rounded-xl text-xs font-semibold bg-rose-50 text-rose-800 border border-rose-200">
-                {modalError}
+              <div className="p-3 rounded-xl text-xs font-semibold bg-rose-50 text-rose-800 border border-rose-200 flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+                <span>{modalError}</span>
               </div>
             )}
 
@@ -381,7 +420,7 @@ export default function UsersManagementPage() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Contoh: Budi Santoso"
-                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-slate-900 font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-slate-900 font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 />
               </div>
 
@@ -395,8 +434,8 @@ export default function UsersManagementPage() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="budi@hydromind.local"
-                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-slate-900 font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  placeholder="operator.greenhouse@hydromind.local"
+                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-slate-900 font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 />
               </div>
 
@@ -412,7 +451,7 @@ export default function UsersManagementPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-slate-900 font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-slate-900 font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 />
               </div>
 
@@ -422,27 +461,33 @@ export default function UsersManagementPage() {
                 </label>
                 <select
                   value={userRole}
-                  onChange={(e) => setUserRole(e.target.value as UserRole)}
-                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-slate-900 font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  onChange={(e) => setUserRole(e.target.value as 'operator' | 'member')}
+                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-slate-900 font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer"
                 >
-                  <option value="member">Member — Hanya Melihat Statistik & Grafik</option>
-                  <option value="operator">Operator — Mengatur Ambang Batas & Mode Kerja</option>
-                  <option value="admin">Admin — Kontrol Penuh Termasuk Manajemen User</option>
+                  <option value="operator">🛠️ Operator — Mengatur Ambang Batas & Mode Kerja</option>
+                  <option value="member">👁️ Member — Hanya Melihat Statistik & Grafik</option>
                 </select>
+
+                <div className="mt-2 flex items-start gap-1.5 p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-[11px] text-slate-500 leading-relaxed">
+                  <Info className="w-3.5 h-3.5 text-slate-400 mt-0.5 shrink-0" />
+                  <span>
+                    Role <strong>Admin</strong> hanya dapat dikonfigurasi langsung oleh developer via database / Seeder.
+                  </span>
+                </div>
               </div>
 
               <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  className="px-4 py-2 text-slate-600 hover:text-slate-800 font-bold rounded-xl hover:bg-slate-100 transition-colors"
+                  className="px-4 py-2.5 text-slate-600 hover:text-slate-800 font-bold rounded-xl hover:bg-slate-100 transition-colors cursor-pointer"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-xl shadow-xs transition-all disabled:opacity-50"
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2.5 rounded-xl shadow-xs transition-all disabled:opacity-50 cursor-pointer"
                 >
                   {submitting ? 'Menyimpan...' : 'Simpan User'}
                 </button>

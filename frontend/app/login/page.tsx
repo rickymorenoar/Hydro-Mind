@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
+import { Eye, EyeOff, LogIn, AlertCircle, ShieldCheck, Loader2 } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -61,7 +62,7 @@ export default function LoginPage() {
           </div>
           <div>
             <h1 className="text-2xl font-black text-slate-900 tracking-tight sm:text-3xl">
-              HydroMind Portal
+              HydroMind Login
             </h1>
             <p className="text-xs sm:text-sm text-slate-500 mt-1">
               Sistem Otomasi Irigasi & Telemetri IoT Greenhouse
@@ -81,7 +82,7 @@ export default function LoginPage() {
 
           {error && (
             <div className="p-3.5 rounded-xl text-xs font-semibold bg-rose-50 text-rose-800 border border-rose-200 flex items-start gap-2.5">
-              <span className="text-rose-500 text-sm">⚠</span>
+              <AlertCircle className="w-4 h-4 text-rose-600 mt-0.5 shrink-0" />
               <span className="flex-1">{error}</span>
             </div>
           )}
@@ -97,7 +98,7 @@ export default function LoginPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@hydromind.local"
+                placeholder="example@hydromind.local"
                 className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
               />
             </div>
@@ -124,17 +125,9 @@ export default function LoginPage() {
                   title={showPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'}
                 >
                   {showPassword ? (
-                    /* Eye Slash Icon (Hide) */
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
-                      <line x1="1" y1="1" x2="23" y2="23" />
-                    </svg>
+                    <EyeOff className="w-4 h-4" />
                   ) : (
-                    /* Eye Icon (Show) */
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                      <circle cx="12" cy="12" r="3" />
-                    </svg>
+                    <Eye className="w-4 h-4" />
                   )}
                 </button>
               </div>
@@ -147,18 +140,13 @@ export default function LoginPage() {
             >
               {loading ? (
                 <>
-                  <svg className="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-                  </svg>
+                  <Loader2 className="w-4 h-4 animate-spin text-white" />
                   <span>Memverifikasi Akun...</span>
                 </>
               ) : (
                 <>
                   <span>Masuk Dashboard</span>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <path d="M5 12h14M12 5l7 7-7 7" />
-                  </svg>
+                  <LogIn className="w-4 h-4" />
                 </>
               )}
             </button>
@@ -166,10 +154,9 @@ export default function LoginPage() {
         </div>
 
         {/* System security note */}
-        <div className="text-center">
-          <p className="text-[11px] text-slate-400">
-            🔒 Dilindungi dengan otentikasi peran (RBAC) & enkripsi sesi.
-          </p>
+        <div className="text-center flex items-center justify-center gap-1.5 text-[11px] text-slate-400">
+          <ShieldCheck className="w-3.5 h-3.5 text-slate-400" />
+          <span>Dilindungi dengan otentikasi peran (RBAC) & enkripsi sesi.</span>
         </div>
       </div>
     </div>
