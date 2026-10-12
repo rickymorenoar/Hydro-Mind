@@ -33,15 +33,32 @@ class AuthController extends Controller
 
     public function login(Request $request): JsonResponse
     {
-        $request->validate([
+        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
             'email'    => 'required|email',
             'password' => 'required|string',
+        ], [
+            'email.required'    => 'Alamat email wajib diisi.',
+            'email.email'       => 'Format alamat email tidak valid.',
+            'password.required' => 'Kata sandi wajib diisi.',
         ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => $validator->errors()->first(),
+                'errors'  => $validator->errors(),
+            ], 422);
+        }
 
         $user = User::where('email', $request->email)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
-            return response()->json(['message' => 'Email atau kata sandi tidak cocok.'], 401);
+            return response()->json([
+                'message' => 'Email atau kata sandi yang Anda masukkan salah. Silakan periksa kembali.',
+                'errors' => [
+                    'email' => ['Email atau kata sandi salah.'],
+                    'password' => ['Kata sandi atau email salah.'],
+                ],
+            ], 401);
         }
 
         // Hapus token lama jika ada agar bersih
@@ -60,6 +77,7 @@ class AuthController extends Controller
             ],
         ]);
     }
+
 
     public function me(Request $request): JsonResponse
     {

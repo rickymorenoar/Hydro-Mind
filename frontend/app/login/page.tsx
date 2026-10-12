@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { Eye, EyeOff, LogIn, AlertCircle, ShieldCheck, Loader2 } from 'lucide-react';
-import Link from 'next/link';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -37,8 +37,8 @@ export default function LoginPage() {
     try {
       await login(email, password);
       router.push('/');
-    } catch (err: any) {
-      setError(err.message || 'Login gagal. Silakan periksa kembali email dan password Anda.');
+    } catch {
+      setError('Salah memasukan alamat email atau password.');
     } finally {
       setLoading(false);
     }
@@ -95,7 +95,7 @@ export default function LoginPage() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="nama@hydromind.local"
+            placeholder="name@hydromind.local"
             className="w-full bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
           />
         </div>

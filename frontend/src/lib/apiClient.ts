@@ -2,31 +2,54 @@ const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
 async function fetchApi<T>(path: string, options: RequestInit = {}): Promise<T> {
   const token = typeof window !== 'undefined' ? localStorage.getItem('hydromind_token') : null;
-  const res = await fetch(`${API_BASE}${path}`, {
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...options.headers,
-    },
-  });
-  if (res.status === 401 && path !== '/login') {
+  
+  let res: Response;
+  try {
+    res = await fetch(`${API_BASE}${path}`, {
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...options.headers,
+      },
+    });
+  } catch (netErr: any) {
+    throw new Error('Gagal terhubung ke server backend. Pastikan server aktif.');
+  }
+
+  // Handle expired token on authenticated routes
+  if (res.status === 401 && path !== '/login' && path !== '/register') {
     if (typeof window !== 'undefined') {
       localStorage.removeItem('hydromind_token');
       localStorage.removeItem('hydromind_user');
-      if (window.location.pathname !== '/login') {
+      if (!window.location.pathname.startsWith('/login')) {
         window.location.href = '/login';
       }
     }
   }
 
   if (!res.ok) {
-    const err = await res.json().catch(() => ({ message: res.statusText }));
-    throw new Error(err.message || `API error ${res.status}`);
+    let errorMessage = `Terjadi kesalahan (Kode: ${res.status})`;
+    let errors: any = {};
+    try {
+      const data = await res.json();
+      if (data.message) {
+        errorMessage = data.message;
+      }
+      if (data.errors && typeof data.errors === 'object') {
+        errors = data.errors;
+      }
+    } catch {
+      // JSON parse failed
+      if (res.statusText) errorMessage = res.statusText;
+    }
+    throw { message: errorMessage, errors };
   }
+
   return res.json();
 }
+
 
 // Auth
 export const login = (email: string, password: string) =>

@@ -9,7 +9,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
   if (isLoginPage) {
     return (
-      <div className="h-screen w-full flex items-center justify-center bg-slate-100 p-3 sm:p-4 overflow-hidden">
+      <div className="min-h-screen w-full flex items-center justify-center bg-slate-100 p-3 sm:p-4 overflow-hidden">
         {children}
       </div>
     );

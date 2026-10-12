@@ -71,6 +71,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         localStorage.setItem('hydromind_token', res.token);
         localStorage.setItem('hydromind_user', JSON.stringify(res.user));
       }
+    } catch (err) {
+      // Rethrow so LoginPage can catch and display the error message
+      throw err;
     } finally {
       setIsLoading(false);
     }
