@@ -24,7 +24,7 @@ export default function GuidePage() {
     { no: 5, component: 'Mini Submersible Water Pump 5 V + Selang', role: 'Aktuator penyiraman tanaman secara otomatis' },
     { no: 6, component: 'Modul Relay 1 Channel 5 V', role: 'Saklar pompa; mengisolasi sinyal GPIO ESP32 dari jalur daya pompa' },
     { no: 7, component: 'Solar Charge Controller (SCC)', role: 'Mengatur pengisian baterai dari panel surya serta memutus arus saat baterai penuh atau terlalu rendah' },
-    { no: 8, component: 'Panel Surya Mini (2 unit, dipasang paralel)', role: 'Sumber energi utama sistem (energi terbarukan)' },
+    { no: 8, component: 'Panel Surya', role: 'Sumber energi utama sistem (energi terbarukan)' },
     { no: 9, component: 'Baterai Li-ion 18650 (3 sel, susunan 3S)', role: 'Penyimpanan energi sistem; tegangan kerja 9,0–12,6 V (nominal 11,1 V)' },
     { no: 10, component: 'Step-Down Converter (Buck Converter)', role: 'Menurunkan tegangan baterai ke 5 V/3,3 V untuk ESP32, sensor & pompa' },
     { no: 11, component: 'Saklar Utama', role: 'Proteksi hubung singkat dan pemutus daya manual saat perawatan' },
@@ -162,7 +162,7 @@ export default function GuidePage() {
             <thead>
               <tr className="border-b border-slate-200 bg-slate-50 font-semibold text-slate-700">
                 <th className="py-2.5 px-3 w-12 text-center">NO</th>
-                <th className="py-2.5 px-3">PERANGKAT LUNAK / LIBRARY</th>
+                <th className="py-2.5 px-3">PERANGKAT LUNAK</th>
                 <th className="py-2.5 px-3">FUNGSI</th>
               </tr>
             </thead>

@@ -104,12 +104,12 @@ export default function DeviceOverviewPage({
           <div className="space-y-1 max-w-lg">
             <h3 className="text-sm sm:text-base font-bold text-slate-900">Menunggu Data Telemetri Pertama dari ESP32</h3>
             <p className="text-xs text-slate-500 leading-relaxed">
-              Perangkat ini telah terdaftar di sistem. Silakan nyalakan ESP32 Anda untuk mengirimkan pembacaan 10 field telemetri sesuai spesifikasi proposal.
+              Perangkat ini telah terdaftar di sistem.
             </p>
           </div>
 
           <div className="p-3 sm:p-4 bg-slate-900 text-slate-100 rounded-xl text-left max-w-md w-full font-mono text-[11px] space-y-1">
-            <span className="text-emerald-400 text-[10px] block">Tabel 5.1 Payload Format (POST /api/device/data):</span>
+            <span className="text-emerald-400 text-[10px] block">Payload Format (POST /api/device/data):</span>
             <pre className="text-[10px] text-slate-300 overflow-x-auto">
 {`{
   "soil_moisture": 52.4,
@@ -134,7 +134,7 @@ export default function DeviceOverviewPage({
               href="/guide"
               className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium rounded-lg text-xs transition-colors"
             >
-              Panduan Pemetaan Proposal (Tabel 5.1)
+              Panduan Pemetaan Proposal
             </Link>
           </div>
         </div>
