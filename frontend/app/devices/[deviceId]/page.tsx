@@ -71,7 +71,7 @@ export default function DeviceOverviewPage({
     };
 
     fetchData();
-    const interval = setInterval(fetchData, 4000);
+    const interval = setInterval(fetchData, 3000);
     return () => {
       isMounted = false;
       clearInterval(interval);
@@ -294,7 +294,6 @@ export default function DeviceOverviewPage({
           <div className="flex items-center justify-between pb-3 border-b border-slate-100">
             <div>
               <h3 className="font-bold text-sm sm:text-base text-slate-900">Monitoring Irigasi & Tanah</h3>
-              <p className="text-[11px] sm:text-xs text-slate-500">soil_moisture (Gauge chart) & pump_status (Indikator Ikon)</p>
             </div>
             <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-700 text-[10px] sm:text-xs font-mono font-medium">
               Mode: {data.mode}
@@ -320,7 +319,7 @@ export default function DeviceOverviewPage({
           <div className="flex items-center justify-between pb-3 border-b border-slate-100">
             <div>
               <h3 className="font-bold text-sm sm:text-base text-slate-900">Monitoring Iklim Mikro Greenhouse</h3>
-              <p className="text-[11px] sm:text-xs text-slate-500">Suhu Udara & Kelembapan Udara (Sensor DHT22)</p>
+              <p className="text-[11px] sm:text-xs text-slate-500">Suhu Udara & Kelembapan Udara</p>
             </div>
             <span className="px-2 py-0.5 rounded bg-sky-50 text-sky-800 text-[10px] sm:text-xs font-mono font-medium">
               Sensor DHT22

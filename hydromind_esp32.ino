@@ -9,8 +9,8 @@ const char* WIFI_SSID     = "Hpras199";       // Hubungkan ke frekuensi 2.4GHz
 const char* WIFI_PASSWORD = "gohma8888";      // Password WiFi kamu
 
 // ── 2. Konfigurasi Server Dashboard HydroMind ────────────────────────────────
-// IP Laptop kamu saat ini (sesuai ipconfig terbaru: 192.168.1.9)
-const char* SERVER_BASE_URL = "http://192.168.1.9:8000/api";
+// IP Laptop kamu saat ini (sesuai ipconfig terbaru: 192.168.1.6)
+const char* SERVER_BASE_URL = "http://192.168.1.6:8000/api";
 const char* DEVICE_NAME     = "GreenHouse 1";
 
 // API Key yang tersimpan resmi di database saat ini
@@ -18,15 +18,12 @@ String apiKey = "W0FBoMLyvpzj9DdEk2M5dR5yZBFh79JEn0bZcXH7";
 
 // ── 3. Pinout ESP32 ──────────────────────────────────────────────────────────
 #define PIN_SOIL_ANALOG    34   // Input Analog Soil Moisture (Sensor 1)
-#define PIN_WATERFLOW      27   // Input Pulsa Waterflow (Sensor 2)
-#define PIN_DHT            4    // Input Data Sensor DHT22 (Sensor 3)
-#define PIN_PUMP_RELAY     26   // Output Kontrol Relay Pompa
+#define PIN_WATERFLOW      32   // Input Pulsa Waterflow (Sensor 2)
+#define PIN_DHT            14   // Input Data Sensor DHT22 (Sensor 3)
+#define PIN_PUMP_RELAY     23   // Output Kontrol Relay Pompa (Pin 23)
 
 #define DHTTYPE DHT22
 DHT dht(PIN_DHT, DHTTYPE);
-
-// Jika saat "POMPA ON" pompa malah mati, ubah nilai ini menjadi false
-const bool RELAY_ACTIVE_LOW = true;
 
 // ── 4. Kalibrasi Sensor Kelembapan Tanah ─────────────────────────────────────
 const int SOIL_ADC_DRY = 4000;  // Nilai saat kering di udara terbuka (0%)
@@ -52,10 +49,11 @@ void IRAM_ATTR pulseCounterISR() {
 
 void setPumpState(bool turnOn) {
   isPumpActive = turnOn;
-  if (RELAY_ACTIVE_LOW) {
-    digitalWrite(PIN_PUMP_RELAY, turnOn ? LOW : HIGH);
+  if (turnOn) {
+    pinMode(PIN_PUMP_RELAY, OUTPUT);
+    digitalWrite(PIN_PUMP_RELAY, LOW);   // ON (Tarik ke GND)
   } else {
-    digitalWrite(PIN_PUMP_RELAY, turnOn ? HIGH : LOW);
+    pinMode(PIN_PUMP_RELAY, INPUT);      // OFF (Dilepas / Floating)
   }
 }
 
@@ -67,7 +65,6 @@ float readSoilMoisture() {
   }
   int adcValue = sum / 15;
 
-  // Rumus persentase kelembapan (semakin kecil nilai ADC, semakin basah tanah)
   float percentage = (float)(SOIL_ADC_DRY - adcValue) / (float)(SOIL_ADC_DRY - SOIL_ADC_WET) * 100.0;
   percentage = constrain(percentage, 0.0, 100.0);
 
@@ -137,7 +134,7 @@ void postTelemetryData(float moisture, float flowRate, bool pumpState) {
   float airHumidity = dht.readHumidity();
 
   if (isnan(airTemp) || isnan(airHumidity)) {
-    Serial.println("[DHT22] ⚠️ Sensor DHT22 belum terhubung atau gagal membaca (cek kabel pin D4).");
+    Serial.println("[DHT22] ⚠️ Sensor DHT22 belum terhubung atau gagal membaca (cek kabel pin D14).");
     airTemp = 28.0;
     airHumidity = 65.0;
   } else {
@@ -178,15 +175,14 @@ void setup() {
   Serial.println("🌿 HydroMind ESP32 Smart Greenhouse Production Firmware");
   Serial.println("========================================================");
 
-  pinMode(PIN_PUMP_RELAY, OUTPUT);
-  setPumpState(false);
+  setPumpState(false); // Default awal: pompa OFF (mode INPUT dilepas)
 
   pinMode(PIN_SOIL_ANALOG, INPUT);
   pinMode(PIN_WATERFLOW, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(PIN_WATERFLOW), pulseCounterISR, RISING);
 
   dht.begin();
-  Serial.println("[DHT22] ✓ Sensor DHT22 diinisialisasi pada pin D4.");
+  Serial.println("[DHT22] ✓ Sensor DHT22 diinisialisasi pada pin D14.");
 
   Serial.printf("[WIFI] Menghubungkan ke SSID: %s ", WIFI_SSID);
   WiFi.mode(WIFI_STA);
@@ -243,9 +239,10 @@ void loop() {
     } else {
       bool targetState = (pumpManualCmd == "ON");
       if (isPumpActive != targetState) {
-        Serial.printf("[KONTROL MANUAL] Saklar Pompa %s\n", targetState ? "ON" : "OFF");
-        setPumpState(targetState);
+        Serial.printf("[KONTROL MANUAL] Perintah Server: %s -> Saklar Pompa %s\n",
+                      pumpManualCmd.c_str(), targetState ? "ON" : "OFF");
       }
+      setPumpState(targetState);
     }
 
     waterFlowRate = calculateWaterFlow(durationMs);

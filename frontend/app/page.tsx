@@ -31,7 +31,7 @@ export default function AllDevicesPage() {
 
   useEffect(() => {
     fetchDevices();
-    const timer = setInterval(fetchDevices, 8000);
+    const timer = setInterval(fetchDevices, 3000);
     return () => clearInterval(timer);
   }, []);
 
@@ -48,6 +48,13 @@ export default function AllDevicesPage() {
   const avgMoisture = devices.length
     ? (
         devices.reduce((acc, d) => acc + (d.latest_reading?.soil_moisture || 0), 0) /
+        devices.length
+      ).toFixed(1)
+    : '0';
+
+  const avgTemp = devices.length
+    ? (
+        devices.reduce((acc, d) => acc + (d.latest_reading?.air_temp || 0), 0) /
         devices.length
       ).toFixed(1)
     : '0';
@@ -69,7 +76,7 @@ export default function AllDevicesPage() {
             </span>
           </div>
           <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5">
-            Monitoring multi-device, kondisi mikroklimat tanah, dan jaringan pompa otonom tenaga surya.
+            Monitoring multi-device, kelembapan tanah, dan iklim mikro greenhouse otonom.
           </p>
         </div>
 
@@ -109,15 +116,15 @@ export default function AllDevicesPage() {
           <span className="text-[10px] sm:text-xs text-slate-500 block font-medium truncate">Rata² Kelembapan</span>
           <div className="flex items-baseline gap-1.5 sm:gap-2 mt-0.5">
             <span className="text-xl sm:text-2xl font-bold font-mono text-slate-900">{avgMoisture}%</span>
-            <span className="text-[10px] sm:text-xs text-slate-400 font-medium">Fleet</span>
+            <span className="text-[10px] sm:text-xs text-slate-400 font-medium">Semua Unit</span>
           </div>
         </div>
 
         <div className="bg-white p-3 sm:p-4 rounded-xl border border-slate-200 shadow-xs">
-          <span className="text-[10px] sm:text-xs text-slate-500 block font-medium truncate">Catu Daya Surya</span>
+          <span className="text-[10px] sm:text-xs text-slate-500 block font-medium truncate">Rata² Suhu Udara</span>
           <div className="flex items-baseline gap-1.5 sm:gap-2 mt-0.5">
-            <span className="text-xl sm:text-2xl font-bold font-mono text-emerald-600">100%</span>
-            <span className="text-[10px] sm:text-xs text-slate-500">Mandiri</span>
+            <span className="text-xl sm:text-2xl font-bold font-mono text-amber-600">{avgTemp}°C</span>
+            <span className="text-[10px] sm:text-xs text-slate-400 font-medium">DHT22</span>
           </div>
         </div>
       </div>

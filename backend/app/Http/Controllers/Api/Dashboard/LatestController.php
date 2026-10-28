@@ -30,7 +30,7 @@ class LatestController extends Controller
             ], 200);
         }
 
-        $isOnline = $reading->created_at ? now()->diffInMinutes($reading->created_at) < 3 : false;
+        $isOnline = $reading->created_at ? $reading->created_at->isAfter(now()->subSeconds(15)) : false;
 
         return response()->json([
             'soil_moisture'   => $reading->soil_moisture,

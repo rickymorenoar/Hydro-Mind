@@ -28,7 +28,7 @@ export default function DeviceCard({ device }: DeviceCardProps) {
                 className={`h-2.5 w-2.5 shrink-0 rounded-full ${
                   isOnline ? 'bg-emerald-500 ring-4 ring-emerald-100' : 'bg-slate-300'
                 }`}
-                title={isOnline ? 'Device Aktif (Heartbeat < 5m)' : 'Device Offline'}
+                title={isOnline ? 'Device Aktif (Heartbeat < 15 detik)' : 'Device Offline'}
               />
               <h3 className="font-semibold text-sm sm:text-base text-slate-900 leading-tight truncate">
                 {device.name}
