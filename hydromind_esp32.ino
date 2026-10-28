@@ -1,6 +1,7 @@
 #include <WiFi.h>
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
+#include <DHT.h>
 
 // ── 1. Konfigurasi Jaringan WiFi ─────────────────────────────────────────────
 // Laptop kamu tersambung ke router "Hpras199". Karena ESP32 hanya bisa 2.4GHz:
@@ -16,9 +17,13 @@ const char* DEVICE_NAME     = "GreenHouse 1";
 String apiKey = "W0FBoMLyvpzj9DdEk2M5dR5yZBFh79JEn0bZcXH7";
 
 // ── 3. Pinout ESP32 ──────────────────────────────────────────────────────────
-#define PIN_SOIL_ANALOG    34   // Input Analog Soil Moisture
-#define PIN_WATERFLOW      27   // Input Pulsa Waterflow
+#define PIN_SOIL_ANALOG    34   // Input Analog Soil Moisture (Sensor 1)
+#define PIN_WATERFLOW      27   // Input Pulsa Waterflow (Sensor 2)
+#define PIN_DHT            4    // Input Data Sensor DHT22 (Sensor 3)
 #define PIN_PUMP_RELAY     26   // Output Kontrol Relay Pompa
+
+#define DHTTYPE DHT22
+DHT dht(PIN_DHT, DHTTYPE);
 
 // Jika saat "POMPA ON" pompa malah mati, ubah nilai ini menjadi false
 const bool RELAY_ACTIVE_LOW = true;
@@ -127,11 +132,21 @@ void postTelemetryData(float moisture, float flowRate, bool pumpState) {
   http.addHeader("Content-Type", "application/json");
   http.addHeader("Accept", "application/json");
 
-  float airTemp = 28.5 + (random(-10, 15) / 10.0);
-  float airHumidity = 65.0 + (random(-20, 20) / 10.0);
-  float batteryVoltage = 12.0 + (random(-2, 2) / 10.0); // Baterai 12V
-  float batteryLevel = map(batteryVoltage * 10, 105, 126, 0, 100);
-  batteryLevel = constrain(batteryLevel, 10.0, 100.0);
+  // ── Baca Sensor Fisik DHT22 (Suhu & Kelembapan Udara) ─────────────────────
+  float airTemp = dht.readTemperature();
+  float airHumidity = dht.readHumidity();
+
+  if (isnan(airTemp) || isnan(airHumidity)) {
+    Serial.println("[DHT22] ⚠️ Sensor DHT22 belum terhubung atau gagal membaca (cek kabel pin D4).");
+    airTemp = 28.0;
+    airHumidity = 65.0;
+  } else {
+    Serial.printf("[SENSOR] DHT22 -> Suhu: %.1f°C | Kelembapan Udara: %.1f%%\n", airTemp, airHumidity);
+  }
+
+  // Catu daya normal sistem (kompatibilitas database tanpa sensor INA)
+  float batteryVoltage = 12.0;
+  float batteryLevel   = 100.0;
 
   StaticJsonDocument<300> doc;
   doc["soil_moisture"]   = round(moisture * 10.0) / 10.0;
@@ -169,6 +184,9 @@ void setup() {
   pinMode(PIN_SOIL_ANALOG, INPUT);
   pinMode(PIN_WATERFLOW, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(PIN_WATERFLOW), pulseCounterISR, RISING);
+
+  dht.begin();
+  Serial.println("[DHT22] ✓ Sensor DHT22 diinisialisasi pada pin D4.");
 
   Serial.printf("[WIFI] Menghubungkan ke SSID: %s ", WIFI_SSID);
   WiFi.mode(WIFI_STA);

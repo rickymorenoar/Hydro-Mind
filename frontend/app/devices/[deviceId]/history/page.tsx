@@ -15,7 +15,7 @@ export default function DeviceHistoryPage({
 
   const [range, setRange] = useState<'24h' | '7d' | '30d'>('24h');
   const [moistureData, setMoistureData] = useState<HistoryPoint[]>([]);
-  const [voltageData, setVoltageData] = useState<HistoryPoint[]>([]);
+  const [tempData, setTempData] = useState<HistoryPoint[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -24,11 +24,11 @@ export default function DeviceHistoryPage({
 
     Promise.all([
       getHistory(deviceId, 'soil_moisture', range).catch(() => []),
-      getHistory(deviceId, 'battery_voltage', range).catch(() => []),
-    ]).then(([mRes, vRes]) => {
+      getHistory(deviceId, 'air_temp', range).catch(() => []),
+    ]).then(([mRes, tRes]) => {
       if (isMounted) {
         setMoistureData(Array.isArray(mRes) ? mRes : []);
-        setVoltageData(Array.isArray(vRes) ? vRes : []);
+        setTempData(Array.isArray(tRes) ? tRes : []);
         setLoading(false);
       }
     });
@@ -38,7 +38,7 @@ export default function DeviceHistoryPage({
     };
   }, [deviceId, range]);
 
-  const hasData = moistureData.length > 0 || voltageData.length > 0;
+  const hasData = moistureData.length > 0 || tempData.length > 0;
 
   return (
     <div className="space-y-4 sm:space-y-6">
@@ -47,7 +47,7 @@ export default function DeviceHistoryPage({
         <div>
           <h2 className="font-bold text-sm sm:text-base text-slate-900">Riwayat & Analisis Telemetri Sensor</h2>
           <p className="text-[11px] sm:text-xs text-slate-500">
-            Pola fluktuasi kadar air media tanam serta siklus baterai tenaga surya
+            Pola fluktuasi kadar air media tanam serta suhu mikroklimat greenhouse (DHT22)
           </p>
         </div>
 
@@ -87,13 +87,13 @@ export default function DeviceHistoryPage({
             unit="%"
           />
 
-          {/* Solar Battery Voltage Chart */}
+          {/* Air Temperature Chart */}
           <TrendChart
-            data={voltageData}
-            label="Tren Tegangan Baterai Tenaga Surya"
-            sublabel="Kurva tegangan catu daya (Volt) — Nominal 11.1V–12.6V"
+            data={tempData}
+            label="Tren Suhu Lingkungan (DHT22)"
+            sublabel="Kurva suhu udara greenhouse (°C) — Target 22°C–32°C"
             color="#d97706"
-            unit="V"
+            unit="°C"
           />
         </div>
       ) : (

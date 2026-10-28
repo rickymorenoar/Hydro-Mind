@@ -15,7 +15,7 @@ class HistoryController extends Controller
         $metric = $request->input('metric', 'soil_moisture');
         $range  = $request->input('range', '24h');
 
-        $allowedMetrics = ['soil_moisture', 'battery_voltage'];
+        $allowedMetrics = ['soil_moisture', 'air_temp', 'air_humidity', 'battery_voltage'];
         if (!in_array($metric, $allowedMetrics)) {
             return response()->json(['message' => 'Invalid metric'], 422);
         }

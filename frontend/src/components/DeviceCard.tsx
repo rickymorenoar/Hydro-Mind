@@ -13,8 +13,6 @@ export default function DeviceCard({ device }: DeviceCardProps) {
   const soilMoisture = r?.soil_moisture ?? 0;
   const airTemp = r?.air_temp ?? 0;
   const airHumidity = r?.air_humidity ?? 0;
-  const batteryLevel = r?.battery_level ?? 0;
-  const batteryVoltage = r?.battery_voltage ?? 0;
   const pumpStatus = r?.pump_status ?? 'OFF';
   const waterFlow = r?.water_flow ?? 0;
   const mode = device.setting?.mode ?? 'AUTO';
@@ -110,32 +108,28 @@ export default function DeviceCard({ device }: DeviceCardProps) {
             </p>
           </div>
 
-          {/* Air Temp & Humidity */}
+          {/* Suhu Udara (DHT22) */}
           <div className="rounded-xl bg-slate-50 p-2.5 border border-slate-100 flex flex-col justify-between">
-            <span className="text-[10px] sm:text-[11px] font-medium text-slate-500 block truncate">Suhu & Udara</span>
-            <div className="flex items-baseline gap-1.5 mt-0.5 font-mono text-xs sm:text-sm font-semibold text-slate-800 truncate">
-              <span>{airTemp.toFixed(1)}°C</span>
-              <span className="text-slate-300">/</span>
-              <span>{airHumidity.toFixed(0)}%RH</span>
+            <span className="text-[10px] sm:text-[11px] font-medium text-slate-500 block truncate">Suhu Udara</span>
+            <div className="flex items-baseline gap-1 mt-0.5">
+              <span className="font-mono text-lg sm:text-xl font-bold text-slate-900">
+                {airTemp.toFixed(1)}
+              </span>
+              <span className="text-xs font-mono text-slate-500">°C</span>
             </div>
-            <p className="text-[10px] text-slate-400 mt-1">DHT22</p>
+            <p className="text-[10px] text-slate-400 mt-1 font-mono truncate">DHT22</p>
           </div>
 
-          {/* Solar Battery */}
+          {/* Kelembapan Udara (DHT22) */}
           <div className="rounded-xl bg-slate-50 p-2.5 border border-slate-100 flex flex-col justify-between">
-            <span className="text-[10px] sm:text-[11px] font-medium text-slate-500 block truncate">Baterai Surya</span>
-            <div className="flex items-baseline justify-between mt-0.5 font-mono">
-              <span className="text-xs sm:text-sm font-bold text-slate-900">{batteryLevel.toFixed(0)}%</span>
-              <span className="text-[10px] sm:text-xs text-slate-500">{batteryVoltage.toFixed(1)}V</span>
+            <span className="text-[10px] sm:text-[11px] font-medium text-slate-500 block truncate">Kelembapan Udara</span>
+            <div className="flex items-baseline gap-1 mt-0.5">
+              <span className="font-mono text-lg sm:text-xl font-bold text-slate-900">
+                {airHumidity.toFixed(0)}
+              </span>
+              <span className="text-xs font-mono text-slate-500">%RH</span>
             </div>
-            <div className="mt-1.5 h-1.5 w-full bg-slate-200 rounded-full overflow-hidden">
-              <div
-                className={`h-full rounded-full ${
-                  batteryLevel < 20 ? 'bg-rose-500' : 'bg-emerald-500'
-                }`}
-                style={{ width: `${Math.min(100, Math.max(0, batteryLevel))}%` }}
-              />
-            </div>
+            <p className="text-[10px] text-slate-400 mt-1 font-mono truncate">DHT22</p>
           </div>
         </div>
       </div>

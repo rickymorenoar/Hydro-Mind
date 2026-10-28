@@ -241,48 +241,46 @@ export default function DeviceOverviewPage({
           </div>
         </div>
 
-        {/* Metric 3: air_temp & air_humidity (DHT22) */}
+        {/* Metric 3: air_temp (Suhu Udara DHT22) */}
         <div className="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200 shadow-xs flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between text-slate-500 text-[10px] sm:text-xs font-medium">
-              <span className="truncate">Suhu & Udara</span>
-              <span className="hidden sm:inline text-[10px] px-2 py-0.5 rounded-full font-mono bg-slate-100 text-slate-700 font-bold">
+              <span className="truncate">Suhu Udara</span>
+              <span className="hidden sm:inline text-[10px] px-2 py-0.5 rounded-full font-mono bg-amber-50 text-amber-700 font-bold">
                 DHT22
               </span>
             </div>
             <div className="flex items-baseline gap-1 sm:gap-2 mt-1.5 sm:mt-2 font-mono">
-              <span className="text-xl sm:text-3xl font-bold text-slate-900">{airTemp.toFixed(1)}°C</span>
-              <span className="text-slate-300 text-sm sm:text-xl font-light">/</span>
-              <span className="text-base sm:text-2xl font-bold text-slate-700">{airHumidity.toFixed(0)}%</span>
+              <span className="text-2xl sm:text-3xl font-bold text-slate-900">{airTemp.toFixed(1)}</span>
+              <span className="font-mono text-xs sm:text-sm text-slate-500 font-bold">°C</span>
             </div>
           </div>
           <div className="mt-2.5 sm:mt-3 pt-2 sm:pt-3 border-t border-slate-100 flex items-center justify-between text-[10px] sm:text-[11px] text-slate-500">
-            <span>air_temp/humidity:</span>
-            <span className="font-semibold text-slate-700 truncate">DHT22 Aktif</span>
+            <span>Status:</span>
+            <span className={`font-semibold truncate ${airTemp > 35 ? 'text-amber-600' : 'text-emerald-600'}`}>
+              {airTemp > 35 ? 'Panas (>35°C)' : 'Normal'}
+            </span>
           </div>
         </div>
 
-        {/* Metric 4: battery_voltage & battery_level */}
+        {/* Metric 4: air_humidity (Kelembapan Udara DHT22) */}
         <div className="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200 shadow-xs flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between text-slate-500 text-[10px] sm:text-xs font-medium">
-              <span className="truncate">Baterai Surya</span>
-              <span className="hidden sm:inline text-[10px] px-2 py-0.5 rounded-full font-mono bg-amber-50 text-amber-800 font-bold">
-                3S Li-ion
+              <span className="truncate">Kelembapan Udara</span>
+              <span className="hidden sm:inline text-[10px] px-2 py-0.5 rounded-full font-mono bg-sky-50 text-sky-700 font-bold">
+                DHT22
               </span>
             </div>
             <div className="flex items-baseline gap-1 sm:gap-2 mt-1.5 sm:mt-2 font-mono">
-              <span className="text-2xl sm:text-3xl font-bold text-slate-900">
-                {batteryVoltage.toFixed(1)}
-              </span>
-              <span className="text-xs sm:text-sm text-slate-500 font-bold">V</span>
-              <span className="text-[10px] sm:text-xs text-slate-400">({batteryLevel.toFixed(0)}%)</span>
+              <span className="text-2xl sm:text-3xl font-bold text-slate-900">{airHumidity.toFixed(0)}</span>
+              <span className="font-mono text-xs sm:text-sm text-slate-500 font-bold">%RH</span>
             </div>
           </div>
           <div className="mt-2.5 sm:mt-3 pt-2 sm:pt-3 border-t border-slate-100 flex items-center justify-between text-[10px] sm:text-[11px] text-slate-500">
-            <span>battery_level:</span>
-            <span className={`font-semibold truncate ${batteryLevel < 20 ? 'text-rose-600' : 'text-emerald-600'}`}>
-              {batteryLevel < 20 ? 'Kritis (<20%)' : 'Normal'}
+            <span>Status:</span>
+            <span className={`font-semibold truncate ${airHumidity < 50 ? 'text-amber-600' : 'text-emerald-600'}`}>
+              {airHumidity < 50 ? 'Kering (<50%)' : 'Optimal'}
             </span>
           </div>
         </div>
@@ -305,7 +303,7 @@ export default function DeviceOverviewPage({
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
             <GaugeCard
-              label="soil_moisture (Gauge Chart)"
+              label="Kelembapan Tanah"
               value={soilMoisture}
               min={0}
               max={100}
@@ -317,31 +315,37 @@ export default function DeviceOverviewPage({
           </div>
         </div>
 
-        {/* Section 2: Zona Catu Daya Mandiri Tenaga Surya */}
+        {/* Section 2: Zona Iklim Mikro Greenhouse (Sensor DHT22) */}
         <div className="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200 shadow-xs space-y-4 sm:space-y-5">
           <div className="flex items-center justify-between pb-3 border-b border-slate-100">
             <div>
-              <h3 className="font-bold text-sm sm:text-base text-slate-900">Monitoring Daya Tenaga Surya</h3>
-              <p className="text-[11px] sm:text-xs text-slate-500">battery_voltage (Gauge chart) & battery_level (Progress bar)</p>
+              <h3 className="font-bold text-sm sm:text-base text-slate-900">Monitoring Iklim Mikro Greenhouse</h3>
+              <p className="text-[11px] sm:text-xs text-slate-500">Suhu Udara & Kelembapan Udara (Sensor DHT22)</p>
             </div>
-            <span className="px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 text-[10px] sm:text-xs font-mono font-medium">
-              3S Li-ion (11.1V)
+            <span className="px-2 py-0.5 rounded bg-sky-50 text-sky-800 text-[10px] sm:text-xs font-mono font-medium">
+              Sensor DHT22
             </span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
             <GaugeCard
-              label="battery_voltage (Gauge Chart)"
-              value={batteryVoltage}
-              min={8.0}
-              max={13.0}
-              unit="V"
-              targetRange={{ min: 11.1, max: 12.6 }}
-              colorScheme="solar"
+              label="Suhu Udara"
+              value={airTemp}
+              min={10}
+              max={50}
+              unit="°C"
+              targetRange={{ min: 22, max: 32, label: 'Ideal' }}
+              colorScheme="amber"
             />
-            <div className="flex flex-col justify-center">
-              <BatteryIndicator level={batteryLevel} voltage={batteryVoltage} />
-            </div>
+            <GaugeCard
+              label="Kelembapan Udara"
+              value={airHumidity}
+              min={0}
+              max={100}
+              unit="%"
+              targetRange={{ min: 50, max: 80, label: 'Ideal' }}
+              colorScheme="sky"
+            />
           </div>
         </div>
       </div>
