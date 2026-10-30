@@ -216,7 +216,7 @@ export default function DeviceSettingsPage({
         <div className="pb-3 border-b border-slate-100">
           <h2 className="font-bold text-sm sm:text-base text-slate-900">Konfigurasi Ambang Batas Kelembapan (Histeresis)</h2>
           <p className="text-[11px] sm:text-xs text-slate-500">
-            Nilai batas bawah (`moisture_lower`) dan batas atas (`moisture_upper`) untuk algoritma penyiraman otomatis
+            Nilai batas bawah dan batas atas untuk algoritma penyiraman otomatis
           </p>
         </div>
 

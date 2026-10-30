@@ -3,20 +3,14 @@
 #include <ArduinoJson.h>
 #include <DHT.h>
 
-// ── 1. Konfigurasi Jaringan WiFi ─────────────────────────────────────────────
-// Laptop kamu tersambung ke router "Hpras199". Karena ESP32 hanya bisa 2.4GHz:
-const char* WIFI_SSID     = "Hpras199";       // Hubungkan ke frekuensi 2.4GHz
-const char* WIFI_PASSWORD = "gohma8888";      // Password WiFi kamu
+const char* WIFI_SSID     = "Hpras199";       
+const char* WIFI_PASSWORD = "gohma8888";  
 
-// ── 2. Konfigurasi Server Dashboard HydroMind ────────────────────────────────
-// IP Laptop kamu saat ini (sesuai ipconfig terbaru: 192.168.1.6)
 const char* SERVER_BASE_URL = "http://192.168.1.6:8000/api";
 const char* DEVICE_NAME     = "GreenHouse 1";
 
-// API Key yang tersimpan resmi di database saat ini
 String apiKey = "W0FBoMLyvpzj9DdEk2M5dR5yZBFh79JEn0bZcXH7";
 
-// ── 3. Pinout ESP32 ──────────────────────────────────────────────────────────
 #define PIN_SOIL_ANALOG    34   // Input Analog Soil Moisture (Sensor 1)
 #define PIN_WATERFLOW      32   // Input Pulsa Waterflow (Sensor 2)
 #define PIN_DHT            14   // Input Data Sensor DHT22 (Sensor 3)
@@ -35,6 +29,7 @@ volatile unsigned long pulseCount = 0;
 float waterFlowRate = 0.0;
 
 String systemMode    = "AUTO";
+String prevMode      = "";       // Mode sebelumnya, untuk deteksi perpindahan mode
 String pumpManualCmd = "OFF";
 float moistureLower  = 40.0;
 float moistureUpper  = 70.0;
@@ -221,22 +216,50 @@ void loop() {
 
     float soilMoisture = readSoilMoisture();
 
+    // Deteksi perpindahan mode (Manual <-> Auto)
+    bool modeJustChanged = (systemMode != prevMode);
+    if (modeJustChanged) {
+      Serial.printf("[MODE] Perpindahan mode: %s -> %s\n", prevMode.c_str(), systemMode.c_str());
+      prevMode = systemMode;
+    }
+
     if (systemMode == "AUTO") {
-      if (soilMoisture < moistureLower) {
-        if (!isPumpActive) {
-          Serial.printf("[KONTROL AUTO] Kelembapan (%.1f%%) < Ambang Bawah (%.0f%%) -> POMPA ON\n",
-                        soilMoisture, moistureLower);
+      // ── MODE OTOMATIS: 100% bergantung sensor soil moisture ──────────────
+      // Saat baru pindah dari Manual ke Auto, langsung evaluasi ulang
+      // tanpa menunggu hysteresis — jadi state Manual tidak "terbawa"
+      if (modeJustChanged) {
+        // Evaluasi langsung: cek apakah tanah butuh air atau tidak
+        if (soilMoisture < moistureUpper) {
+          // Tanah masih di bawah batas atas → nyalakan pompa
+          Serial.printf("[KONTROL AUTO] Mode baru aktif. Kelembapan (%.1f%%) < Ambang Atas (%.0f%%) -> POMPA ON\n",
+                        soilMoisture, moistureUpper);
           setPumpState(true);
-        }
-      }
-      else if (soilMoisture > moistureUpper) {
-        if (isPumpActive) {
-          Serial.printf("[KONTROL AUTO] Kelembapan (%.1f%%) > Ambang Atas (%.0f%%) -> POMPA OFF\n",
+        } else {
+          // Tanah sudah cukup basah → matikan pompa
+          Serial.printf("[KONTROL AUTO] Mode baru aktif. Kelembapan (%.1f%%) >= Ambang Atas (%.0f%%) -> POMPA OFF\n",
                         soilMoisture, moistureUpper);
           setPumpState(false);
         }
+      } else {
+        // Operasi normal Auto: hysteresis (batas bawah ON, batas atas OFF)
+        if (soilMoisture < moistureLower) {
+          if (!isPumpActive) {
+            Serial.printf("[KONTROL AUTO] Kelembapan (%.1f%%) < Ambang Bawah (%.0f%%) -> POMPA ON\n",
+                          soilMoisture, moistureLower);
+            setPumpState(true);
+          }
+        }
+        else if (soilMoisture > moistureUpper) {
+          if (isPumpActive) {
+            Serial.printf("[KONTROL AUTO] Kelembapan (%.1f%%) > Ambang Atas (%.0f%%) -> POMPA OFF\n",
+                          soilMoisture, moistureUpper);
+            setPumpState(false);
+          }
+        }
+        // Di antara bawah-atas: pertahankan state saat ini (hysteresis normal)
       }
     } else {
+      // ── MODE MANUAL: 100% bergantung tombol ON/OFF di website ────────────
       bool targetState = (pumpManualCmd == "ON");
       if (isPumpActive != targetState) {
         Serial.printf("[KONTROL MANUAL] Perintah Server: %s -> Saklar Pompa %s\n",
